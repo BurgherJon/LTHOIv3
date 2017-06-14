@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"RnkXbyw9us4_w3H-FU6An0C4oYs/_J_V_G_ZpFpZveBiyXnz8jVuTH0\"",
+ "etag": "\"RnkXbyw9us4_w3H-FU6An0C4oYs/nB2wjtF6uLn-E8nJyNWZL6SEzLc\"",
  "discoveryVersion": "v1",
  "id": "playerAPI:v2",
  "name": "playerAPI",
@@ -13,9 +13,9 @@
   "x32": "https://www.gstatic.com/images/branding/product/1x/googleg_32dp.png"
  },
  "protocol": "rest",
- "baseUrl": "https://leavethehouseoutofit.appspot.com/_ah/api/playerAPI/v2/sayHi/",
+ "baseUrl": "https://lthoi-test.appspot.com/_ah/api/playerAPI/v2/sayHi/",
  "basePath": "/_ah/api/playerAPI/v2/sayHi/",
- "rootUrl": "https://leavethehouseoutofit.appspot.com/_ah/api/",
+ "rootUrl": "https://lthoi-test.appspot.com/_ah/api/",
  "servicePath": "playerAPI/v2/sayHi/",
  "batchPath": "batch",
  "parameters": {

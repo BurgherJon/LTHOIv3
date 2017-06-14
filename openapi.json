@@ -2,9 +2,9 @@
  "swagger": "2.0",
  "info": {
   "version": "1.0.0",
-  "title": "leavethehouseoutofit.appspot.com"
+  "title": "playerapi.endpoints.lthoi-test.cloud.goog"
  },
- "host": "leavethehouseoutofit.appspot.com",
+ "host": "playerapi.endpoints.lthoi-test.cloud.goog",
  "basePath": "/_ah/api",
  "schemes": [
   "https"
@@ -16,9 +16,9 @@
   "application/json"
  ],
  "paths": {
-  "/playerAPI/v2/sayHi/{name}": {
+  "/playerapi/v1/sayHi/{name}": {
    "post": {
-    "operationId": "PlayerAPISayHi",
+    "operationId": "PlayerapiSayHi",
     "parameters": [
      {
       "name": "name",

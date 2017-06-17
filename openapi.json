@@ -16,9 +16,9 @@
   "application/json"
  ],
  "paths": {
-  "/playerapi/v1/sayHi/{name}": {
+  "/playerAPI/v1/sayHi/{name}": {
    "post": {
-    "operationId": "PlayerapiSayHi",
+    "operationId": "PlayerAPISayHi",
     "parameters": [
      {
       "name": "name",

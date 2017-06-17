@@ -12,11 +12,10 @@
         <property name="java.util.logging.config.file" value="WEB-INF/logging.properties" />
     </system-properties>
 
-    <!-- REMOVING SERVICE MANAGEMENT... IT WORKS WITHOUT SERVICE MANAGEMENT!!!!!
+
     <env-variables>
         <env-var name="ENDPOINTS_SERVICE_NAME" value="playerapi.endpoints.lthoi-test.cloud.goog" />
-        <env-var name="ENDPOINTS_SERVICE_VERSION" value="1" />
+        <env-var name="ENDPOINTS_SERVICE_VERSION" value="2017-06-17r0" />
     </env-variables>
-    -->
 
 </appengine-web-app>

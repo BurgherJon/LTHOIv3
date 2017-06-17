@@ -23,7 +23,7 @@
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
-    <!-- REMOVING SERVICE MANAGEMENT... IT WORKS WITHOUT SERVICE MANAGEMENT!!!!!
+
     <filter>
         <filter-name>endpoints-api-configuration</filter-name>
         <filter-class>com.google.api.control.ServiceManagementConfigFilter</filter-class>
@@ -48,6 +48,5 @@
         <filter-name>endpoints-api-controller</filter-name>
         <servlet-name>EndpointsServlet</servlet-name>
     </filter-mapping>
-    -->
 
 </web-app>

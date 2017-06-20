@@ -10,9 +10,6 @@
     <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase-messaging.js"></script>
     <!-- End Firebase Stuff -->
 
-</head>
-
-
 <!-- Firebase Stuff -->
 <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
 <script>
@@ -28,30 +25,31 @@
   firebase.initializeApp(config);
 </script>
 
-<script src="https://cdn.firebase.com/libs/firebaseui/2.1.1/firebaseui.js"></script>
-<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.1.1/firebaseui.css" />
+<script src="https://cdn.firebase.com/libs/firebaseui/2.2.0/firebaseui.js"></script>
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.2.0/firebaseui.css" />
 <script type="text/javascript">
-    var testvar = "Jonathan";
-    var uiConfig = {signInSuccessUrl: ‘index.html’, signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID, firebase.auth.EmailAuthProvider.PROVIDER_ID], tosUrl: ‘tos.html’};
-    var app = firebase.initializeApp(config);
-    var auth = app.auth();
-    var ui = new firebaseui.auth.AuthUI(auth);
+      // FirebaseUI config.
+      var uiConfig = {
+        signInSuccessUrl: 'index.html#worked',
+        signInOptions: [
+          // Leave the lines as is for the providers you want to offer your users.
+          firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+          firebase.auth.EmailAuthProvider.PROVIDER_ID
+        ],
+        // Terms of service url.
+        tosUrl: 'tos.html'
+      };
 
-    ui.start('#firebaseui-auth-container', uiConfig);
+      // Initialize the FirebaseUI Widget using Firebase.
+      var ui = new firebaseui.auth.AuthUI(firebase.auth());
+      // The start method will wait until the DOM is loaded.
+      ui.start('#firebaseui-auth-container', uiConfig);
 </script>
 
+</head>
 
 
 <body role="document" style="padding-top: 70px;">
-    <!--
-      Output from Endpoints API call.
-    -->
-
-    <!--
-      A form that takes a text value and submits it to the Endpoint,
-      access to the Endpoint is enabled once the client is loaded below.
-    -->
-
     <table width="100%">
         <tr>
             <th width="70%">

@@ -16,12 +16,12 @@
   "application/json"
  ],
  "paths": {
-  "/playerAPI/v1/sayHi/{name}": {
-   "post": {
-    "operationId": "PlayerAPISayHi",
+  "/playerapi/v1/me/{firebase_uid}": {
+   "get": {
+    "operationId": "PlayerapiGetMe",
     "parameters": [
      {
-      "name": "name",
+      "name": "firebase_uid",
       "in": "path",
       "required": true,
       "type": "string"
@@ -31,18 +31,55 @@
      "200": {
       "description": "A successful response",
       "schema": {
-       "$ref": "#/definitions/MyBean"
+       "$ref": "#/definitions/Me"
       }
      }
-    }
+    },
+    "security": [
+     {
+      "api_key": [ ]
+     }
+    ]
    }
   }
  },
+ "securityDefinitions": {
+  "api_key": {
+   "type": "apiKey",
+   "name": "key",
+   "in": "query"
+  }
+ },
  "definitions": {
-  "MyBean": {
+  "Me": {
    "properties": {
-    "data": {
+    "email": {
      "type": "string"
+    },
+    "fname": {
+     "type": "string"
+    },
+    "linitial": {
+     "type": "string"
+    },
+    "lname": {
+     "type": "string"
+    },
+    "losses": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "pushes": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "winnings": {
+     "type": "number",
+     "format": "double"
+    },
+    "wins": {
+     "type": "integer",
+     "format": "int32"
     }
    }
   }

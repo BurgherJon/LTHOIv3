@@ -13,7 +13,7 @@
 <!-- Firebase Stuff -->
 <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
 <script>
-  // Initialize Firebase
+  // Initialize Firebase... Obviously this should be hidden in a real version of the application!
   var config = {
     apiKey: "AIzaSyBfZ67kQFlBE8XiOcbPuCuGT0p2OQjxXTs",
     authDomain: "lthoi-test.firebaseapp.com",
@@ -30,11 +30,13 @@
 <script type="text/javascript">
       // FirebaseUI config.
       var uiConfig = {
-        signInSuccessUrl: 'index.html#worked',
+        signInSuccessUrl: 'logged.html',
         signInOptions: [
           // Leave the lines as is for the providers you want to offer your users.
           firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-          firebase.auth.EmailAuthProvider.PROVIDER_ID
+          firebase.auth.EmailAuthProvider.PROVIDER_ID,
+          firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+          firebase.auth.TwitterAuthProvider.PROVIDER_ID
         ],
         // Terms of service url.
         tosUrl: 'tos.html'
@@ -60,92 +62,10 @@
                 <div id='firebaseui-auth-container'></div>
             </th>
         </tr>
-
+        <tr></tr>
     </table>
 </body>
-    <!-- Old Code for Reference
-    <div class="jumbotron">
-        <div class="row">
-            <div class="col-lg-12">
-                <h1>Hello, Endpoints!</h1>
-                <p>Enter your name and press the button below to call your Google Cloud Endpoints
-                    API.</p>
-                <form>
-                    <div class="input-group">
-                        <input type="text" class="form-control input-lg" placeholder="Name"
-                               id="nameInput"/>
-                        <span class="input-group-btn">
-                             <button class="btn btn-default btn-primary btn-group btn-lg"
-                                     type="submit" id="helloButton">Say "Hello" &raquo;</button>
-                          </span>
-                    </div>
-                </form>
-                <br/>
-                <p>If you need step-by-step instructions for connecting your Android application to
-                    this backend module, see <a
-                            href="https://github.com/GoogleCloudPlatform/gradle-appengine-templates/tree/master/HelloEndpoints">"App
-                        Engine Java Endpoints Module" template documentation</a>.</p>
-                <p>
-                    <small>
-                        For more information about Google App Engine for Java, check out the <a
-                            href="https://developers.google.com/appengine/docs/java/">App Engine
-                        documentation</a>.<br/>
-                        To learn more about Google Cloud Endpoints, see <a
-                            href="https://developers.google.com/appengine/docs/java/endpoints/">Cloud
-                        Endpoints documentation</a>.<br/>
-                        If you'd like to access your generated Google Cloud Endpoints APIs directly,
-                        see the <a href="/_ah/api/explorer">Cloud Endpoints API Explorer</a>.
-                    </small>
-                </p>
-            </div>
-        </div>
-    </div>
-    <-->
 
-<script type="text/javascript">
-    /*
-    // A function that attaches a "Say Hello" button click handler
-    function enableClick() {
-      document.getElementById('helloButton').onclick = function() {
-        var name = document.getElementById('nameInput').value;
-        gapi.client.myApi.sayHi({'name': name}).execute(
-          function(response) {
-            var outputAlertDiv = document.getElementById('outputAlert');
-            outputAlertDiv.style.visibility = 'visible';
-
-            if (!response.error) {
-              outputAlertDiv.className = 'alert alert-success';
-              outputAlertDiv.innerHTML = '<h2>' + response.result.data + '</h2>';
-            }
-            else if (response.error) {
-              outputAlertDiv.className = 'alert alert-danger';
-              outputAlertDiv.innerHTML = '<b>Error Code: </b>' + response.error.code + ' [' + response.error.message + ']';
-            }
-          }
-        );
-        return false;
-      }
-    }
-    */
-
-    // This is called initially
-    function init() {
-      var apiName = 'playerapi';
-      var apiVersion = 'v1';
-      var apiRoot = 'https://' + window.location.host + '/_ah/api';
-      if (window.location.hostname == 'localhost'
-          || window.location.hostname == '127.0.0.1'
-          || ((window.location.port != "") && (window.location.port > 1023))) {
-            // We're probably running against the DevAppServer
-            apiRoot = 'http://' + window.location.host + '/_ah/api';
-      }
-      var callback = function() {
-          display.innerHTML = "init Worked";
-      }
-      gapi.client.load(apiName, apiVersion, callback, apiRoot);
-    }
-
-</script>
 
 
 

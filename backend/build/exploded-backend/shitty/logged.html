@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LTHOI Shitty UI</title>
+
+    <!-- Firebase Stuff -->
+    <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase-messaging.js"></script>
+    <!-- End Firebase Stuff -->
+
+<!-- Firebase Stuff -->
+<script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
+<script>
+  // Initialize Firebase, Obviously should be hidden in the real app.
+  var config = {
+    apiKey: "AIzaSyBfZ67kQFlBE8XiOcbPuCuGT0p2OQjxXTs",
+    authDomain: "lthoi-test.firebaseapp.com",
+    databaseURL: "https://lthoi-test.firebaseio.com",
+    projectId: "lthoi-test",
+    storageBucket: "lthoi-test.appspot.com",
+    messagingSenderId: "424262593373"
+  };
+  firebase.initializeApp(config);
+</script>
+
+</head>
+
+
+<body role="document" style="padding-top: 70px;">
+    <table width="100%">
+        <tr>
+            <th width="70%">
+                <br>Welcome to Leave The House Out of It Shitty Dev UI!<br>
+            </th>
+            <th>
+                <div id='userinfo'></div>
+            </th>
+        </tr>
+        <tr>
+            <th>
+                <div id="maindisplay" align="left"></div>
+            </th>
+            <th>
+                <div id="sidebar"></div>
+            </th>
+        </tr>
+
+    </table>
+</body>
+
+
+<script type="text/javascript">
+    // This is called initially to setup the connection with the API
+    function init() {
+      //This is standard Google stuff to load the API.
+      var apiName = 'playerapi';
+      var apiVersion = 'v1';
+      var apiRoot = 'https://' + window.location.host + '/_ah/api';
+      if (window.location.hostname == 'localhost'
+          || window.location.hostname == '127.0.0.1'
+          || ((window.location.port != "") && (window.location.port > 1023))) {
+            // We're probably running against the DevAppServer
+            apiRoot = 'http://' + window.location.host + '/_ah/api';
+      }
+      var callback = function() {
+          maindisplay.innerHTML = "init Worked"; //This is just for my debugging, so if setupUser() crashes, I know where we left  off.
+
+          //Set the id Token.  This should obviously, be hidden in the actual application.
+          gapi.client.setApiKey("AIzaSyDT-hXFhfRcHvmiFqEzTxaLQh2u0FY62Gc");
+
+          setupUser();  //Replace this with whatever you want to call once everything is setup.
+      }
+      gapi.client.load(apiName, apiVersion, callback, apiRoot);
+    }
+
+    //Setup the logged in user's name.
+    function setupUser() {
+         var uid = firebase.auth().currentUser.uid;
+         var requestData = {};
+         requestData.firebase_uid = uid;
+
+         gapi.client.playerapi.getMe(requestData).execute
+         (
+          function(response)
+          {
+            if (!response.error)
+            {
+              //Put the username in the corner.
+              userinfo.innerHTML = "Hello " + response.fname;
+
+              //Setup League Options
+              var display = 'Choose the league you want to work with:<br>';
+              display = display + '<Table width="100%">';
+
+              var leagues = response.leagues || [];
+
+              if (leagues.length > 0)
+              {
+                  display = display + + "<tr><th>Name</th><th>Wins</th><th>Losses</th><th>Pushes</th><th>Winnings</th></tr>";
+                  for (z=0;z<leagues.length;z++)
+                  {
+                      display = display + "<tr><th>" + leagues[z].league_Name + "</th><th>" + leagues[z].wins + "</th><th>" + leagues[z].losses + "</th><th>" + leagues[z].pushes + "</th><th>" + leagues[z].winnings + "</th></tr>";
+                  }
+              }
+              else
+              {
+                  display = display + '<tr><th>You haven\'t joined any leagues.  Please contact a league administrator.</tr></th>';
+              }
+              display = display + '</Table>';
+              maindisplay.innerHTML = display;
+            }
+            else if (response.error)
+            {
+              //The most common error will be that someone came to the page accidentally and doesn't have an account setup (or is using a new ID).  This is returned as a 503 with the message "Firebase UID not recognized."
+              if (response.error.code == 503) //If it came back undefined they'll have to call to get setup.
+              {
+                maindisplay.innerHTML = 'We do not recognize you with that login.  This could be for several reasons.<br>1.  You have never used that particular method to authenticate (e.g. you used to use Facebook and just used Twitter).  You can either <a href="index.html">GO BACK</a> and use the old way or email your league administrator to add this new authentication.<br>2. You\'re a new user.  Welcome!  Please email your league administrator and tell him who you are so that he can link this login method to your id.<br>3. The system isn\'t behaving properly... shame on Jonathan.';
+              }
+
+
+              userinfo.innerHTML = '<b>Error Code: </b>' + response.error.code + ' [' + response.error.message + ']';
+            }
+          }
+        );
+
+
+
+        return false;
+    }
+
+</script>
+
+
+
+<!--
+ Load the Google APIs Client Library for JavaScript
+ More info here : https://developers.google.com/api-client-library/javascript/reference/referencedocs
+-->
+
+<script src="https://apis.google.com/js/client.js?onload=init"></script>
+</html>

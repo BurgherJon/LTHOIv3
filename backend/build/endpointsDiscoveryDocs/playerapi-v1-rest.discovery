@@ -8,8 +8,8 @@
    }
   }
  },
- "basePath": "/_ah/api/playerapi/v1/sayHi/",
- "baseUrl": "https://lthoi-test.appspot.com/_ah/api/playerapi/v1/sayHi/",
+ "basePath": "/_ah/api/playerapi/v1/me/",
+ "baseUrl": "https://lthoi-test.appspot.com/_ah/api/playerapi/v1/me/",
  "batchPath": "batch",
  "description": "This is an API",
  "discoveryVersion": "v1",
@@ -20,22 +20,22 @@
  "id": "playerapi:v1",
  "kind": "discovery#restDescription",
  "methods": {
-  "sayHi": {
-   "httpMethod": "POST",
-   "id": "playerapi.sayHi",
+  "getMe": {
+   "httpMethod": "GET",
+   "id": "playerapi.getMe",
    "parameterOrder": [
-    "name"
+    "firebase_uid"
    ],
    "parameters": {
-    "name": {
+    "firebase_uid": {
      "location": "path",
      "required": true,
      "type": "string"
     }
    },
-   "path": "{name}",
+   "path": "{firebase_uid}",
    "response": {
-    "$ref": "MyBean"
+    "$ref": "Me"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
@@ -93,16 +93,88 @@
  "protocol": "rest",
  "rootUrl": "https://lthoi-test.appspot.com/_ah/api/",
  "schemas": {
-  "MyBean": {
-   "id": "MyBean",
+  "League_Season": {
+   "id": "League_Season",
    "properties": {
-    "data": {
+    "league_Name": {
      "type": "string"
+    },
+    "league_Season_ID": {
+     "format": "int32",
+     "type": "integer"
+    },
+    "losses": {
+     "format": "int32",
+     "type": "integer"
+    },
+    "num_Players": {
+     "format": "int32",
+     "type": "integer"
+    },
+    "position": {
+     "format": "int32",
+     "type": "integer"
+    },
+    "pushes": {
+     "format": "int32",
+     "type": "integer"
+    },
+    "season": {
+     "format": "int32",
+     "type": "integer"
+    },
+    "winnings": {
+     "format": "double",
+     "type": "number"
+    },
+    "wins": {
+     "format": "int32",
+     "type": "integer"
+    }
+   },
+   "type": "object"
+  },
+  "Me": {
+   "id": "Me",
+   "properties": {
+    "email": {
+     "type": "string"
+    },
+    "fname": {
+     "type": "string"
+    },
+    "leagues": {
+     "items": {
+      "$ref": "League_Season"
+     },
+     "type": "array"
+    },
+    "linitial": {
+     "type": "string"
+    },
+    "lname": {
+     "type": "string"
+    },
+    "losses": {
+     "format": "int32",
+     "type": "integer"
+    },
+    "pushes": {
+     "format": "int32",
+     "type": "integer"
+    },
+    "winnings": {
+     "format": "double",
+     "type": "number"
+    },
+    "wins": {
+     "format": "int32",
+     "type": "integer"
     }
    },
    "type": "object"
   }
  },
- "servicePath": "playerapi/v1/sayHi/",
+ "servicePath": "playerapi/v1/me/",
  "version": "v1"
 }

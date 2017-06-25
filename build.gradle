@@ -6,7 +6,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.2'
+        classpath 'com.android.tools.build:gradle:2.3.2'
 
         //Weird Fix... even google doesn't want to explain why it's necessary
         //Google Note: https://groups.google.com/forum/#!topic/google-cloud-endpoints/O0YALBKx1tY

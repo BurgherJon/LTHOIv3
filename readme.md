@@ -23,7 +23,7 @@ Steps for setting up a dev environment:
 Building and Deploying for testing.
 * Build from the command line: *./gradlew build*
 * <If you've changed the API Definition> Generate the API doc: 
-	* *endpoints-framework-tools get-openapi-doc --hostname=playerapi.endpoints.lthoi-test.cloud.goog --war=backend/build/exploded-app com.cavellandcavell.leavethehouseoutofit.backend.PlayerAPI*
+	* *endpoints-framework-tools get-openapi-doc --hostname=playerapi.endpoints.lthoi-test.cloud.goog --war=backend/build/exploded-backend com.cavellandcavell.leavethehouseoutofit.backend.PlayerAPI*
 * <If you've changed the API Definition> Deploy the API config
 	* *gcloud service-management deploy openapi.json*
 * <If you've changed the API Definition> Check for the new version of the API.

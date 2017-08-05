@@ -51,6 +51,11 @@ public class Me
 
         try
         {
+            this.winnings = 0;
+            this.losses = 0;
+            this.wins = 0;
+            this.pushes = 0;
+
             conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);
 
             strquery = "Select u.user_id AS user_id, u.email AS email, u.fname AS fname, u.linitial AS linitial, u.lname AS lname, lsum.league_season_id AS league_season_id FROM lthoidb.Users u INNER JOIN lthoidb.League_Season_User_Map lsum ON u.user_id = lsum.user_id INNER JOIN lthoidb.firebaseids fb ON u.user_id = fb.user_id INNER JOIN league_seasons ls ON ls.league_season_id = lsum.league_season_id INNER JOIN lthoidb.sysinfo si ON ls.season = si.CurrentSeason WHERE fb.firebase_uid = '" + firebase_uid + "';";
@@ -63,16 +68,17 @@ public class Me
                 this.setEmail(rs.getString("email"));
 
                 leagues = new ArrayList<League_Season>();
+                League_Season thisls;
                 do
                 {
-                    leagues.add(new League_Season(rs.getInt("user_id"), rs.getInt("league_season_id")));
-
+                    thisls = new League_Season(firebase_uid, rs.getInt("league_season_id"));
+                    leagues.add(thisls);
 
                     //Eventually this should be adding up wins and losses as we go.
-                    this.losses = -2;
-                    this.wins = -1;
-                    this.pushes = -1;
-                    this.winnings = -1.0;
+                    this.losses += thisls.getLosses();
+                    this.wins += thisls.getWins();
+                    this.pushes += thisls.getPushes();
+                    this.winnings += thisls.getWinnings();
 
                 } while (rs.next());
 

@@ -37,7 +37,7 @@ public class Environment
         //If you change the local variable values you must update them here.
         String local_db_url = "jdbc:mysql://127.0.0.1:3306/lthoidb";
         String local_db_user = "root";
-        String local_db_password = "";
+        String local_db_password = "vv";
         String local_db_driver = "com.mysql.jdbc.Driver";
 
         //If you change the test variable values you must update them here.

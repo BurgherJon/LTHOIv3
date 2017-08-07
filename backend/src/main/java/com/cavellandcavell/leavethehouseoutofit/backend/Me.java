@@ -58,6 +58,7 @@ public class Me
 
             conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);
 
+
             strquery = "Select u.user_id AS user_id, u.email AS email, u.fname AS fname, u.linitial AS linitial, u.lname AS lname, lsum.league_season_id AS league_season_id FROM lthoidb.Users u INNER JOIN lthoidb.League_Season_User_Map lsum ON u.user_id = lsum.user_id INNER JOIN lthoidb.firebaseids fb ON u.user_id = fb.user_id INNER JOIN league_seasons ls ON ls.league_season_id = lsum.league_season_id INNER JOIN lthoidb.sysinfo si ON ls.season = si.CurrentSeason WHERE fb.firebase_uid = '" + firebase_uid + "';";
             ResultSet rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?
@@ -67,11 +68,12 @@ public class Me
                 this.setLinitial(rs.getString("Linitial"));
                 this.setEmail(rs.getString("email"));
 
+
                 leagues = new ArrayList<League_Season>();
                 League_Season thisls;
                 do
                 {
-                    thisls = new League_Season(firebase_uid, rs.getInt("league_season_id"));
+                    thisls = new League_Season(firebase_uid, rs.getInt("league_season_id"), conn);
                     leagues.add(thisls);
 
                     //Eventually this should be adding up wins and losses as we go.
@@ -82,6 +84,7 @@ public class Me
 
                 } while (rs.next());
 
+
             }
             else //Nothing in the result set.
             {
@@ -91,7 +94,7 @@ public class Me
 
             conn.close();
         }
-        catch (SQLException e)
+        catch (Exception e)
         {
             log.severe("SQL Exception processing!");
             log.severe("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);

@@ -14,11 +14,22 @@ This seems pretty obvious.
 
 Steps for setting up a dev environment:
 * Clone this repository
-	* Install Gradle
-	* Install Android Studio
-	* Install Endpoint Framework Tools
-		* http://search.maven.org/remotecontent?filepath=com/google/endpoints/endpoints-framework-tools/2.0.0-beta.11/endpoints-framework-tools-2.0.0-beta.11.zip
-		* Create a PATH for endpoints-framework-tools
+* Install Gradle
+* Install Android Studio
+* Install Endpoint Framework Tools
+	* http://search.maven.org/remotecontent?filepath=com/google/endpoints/endpoints-framework-tools/2.0.0-beta.11/endpoints-framework-tools-2.0.0-beta.11.zip
+	* Create a PATH for endpoints-framework-tools
+
+
+Desktop Testing
+* The default setting in Android Studio to run locally are messed up for some point. Modify the App Engine DevAppServer in Android Studio's War path to point to "/backend/build/exploded-app".
+	* Note: You can also run from the command line using the task appengineStart / appengineStop, but I recommend using the Android Studio so that you can see the logs.
+* Install mysql server locally
+	* The test database is cloned from production regularly, you can import a dump from it.
+	* The code assumes the local database will be at 127.0.0.1:3306 and that the login will be root with no password.
+* You need to have two local environment variables that must match the values in appengine-web.xml.
+	* ENDPOINTS_SERVICE_NAME e.g. "playerapi.endpoints.lthoi-test.cloud.goog"
+	* ENDPOINTS_SERVICE_VERSION e.g. "2017-08-06r0"
 
 Building and Deploying for testing.
 * Build from the command line: *./gradlew build*

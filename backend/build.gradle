@@ -15,6 +15,10 @@ buildscript {    // Configuration for building
 
         // Endpoints Frameworks Gradle plugin
         classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:+'
+
+        // MYSQL
+        classpath 'mysql:mysql-connector-java:5.1.6'
+
     }
 }
 // [END buildscript]
@@ -37,25 +41,25 @@ apply plugin: 'com.google.cloud.tools.endpoints-framework-server'
 
 dependencies {
     // Apengine Stuff
-    compile group: 'com.google.appengine', name: 'appengine-tools-sdk', version: '1.9.53'
+    compile group: 'com.google.appengine', name: 'appengine-tools-sdk', version: '1.9.54'
 
     providedCompile group: 'javax.servlet', name: 'servlet-api', version:'2.5'
     compile 'jstl:jstl:1.2'
     compile group: 'javax.inject', name: 'javax.inject', version: '1'
-
 
     // Endpoints Frameworks v2.0
     // [START endpoints-tools]
     compile group: 'com.google.endpoints', name: 'endpoints-framework', version: '2.0.7'
 
     //Adding API Management
-    compile group: 'com.google.endpoints', name: 'endpoints-management-control-appengine', version: '1.0.0-beta.11'
-    compile group: 'com.google.endpoints', name: 'endpoints-framework-auth', version: '1.0.0-beta.11'
+    compile group: 'com.google.endpoints', name: 'endpoints-management-control-appengine', version: '1.0.4'
+    compile group: 'com.google.endpoints', name: 'endpoints-framework-auth', version: '1.0.4'
 
     // [END endpoints-tools]
     // End of Endpoints Frameworks v2.0
 
-
+    //jdbc driver
+    compile 'com.google.cloud.sql:mysql-socket-factory:1.0.3'
 }
 
 // [START endpoints-server]

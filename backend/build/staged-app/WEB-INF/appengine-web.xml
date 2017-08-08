@@ -5,7 +5,7 @@
     <threadsafe>true</threadsafe>
 
     <basic-scaling>
-        <max-instances>2</max-instances>
+        <max-instances>1</max-instances>
     </basic-scaling>
 
     <system-properties>
@@ -15,7 +15,9 @@
 
     <env-variables>
         <env-var name="ENDPOINTS_SERVICE_NAME" value="playerapi.endpoints.lthoi-test.cloud.goog" />
-        <env-var name="ENDPOINTS_SERVICE_VERSION" value="2017-06-24r1" />
+        <env-var name="ENDPOINTS_SERVICE_VERSION" value="2017-08-06r0" />
     </env-variables>
+
+    <use-google-connector-j>true</use-google-connector-j>
 
 </appengine-web-app>

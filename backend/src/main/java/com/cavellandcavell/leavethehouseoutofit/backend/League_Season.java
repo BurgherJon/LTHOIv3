@@ -19,28 +19,13 @@ public class League_Season
     private int pushes;
     private double winnings;
 
-    public League_Season(int user_id, int league_season_id)
+    public League_Season(String user_id, int league_season_id, Connection conn)
     {
         String strquery;
         final Logger log = Logger.getLogger(League_Season.class.getName());
+        log.info("In the league Season constructor for " + league_season_id);
 
-        Environment env = new Environment();
-        try
-        {
-            Class.forName(env.db_driver);
-        }
-        catch (ClassNotFoundException e)
-        {
-            log.severe("Unable to load database driver.");
-            log.severe(e.getMessage());
-        }
-
-        Connection conn = null;
-
-        try
-        {
-            conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);
-
+        try {
             strquery = "SELECT ls.league_name, ls.season, ls.league_season_id From lthoidb.league_seasons ls WHERE ls.league_season_id = " + league_season_id + ";";
             ResultSet rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?
@@ -49,25 +34,55 @@ public class League_Season
                 this.league_name = rs.getString("league_name");
                 this.season = rs.getInt("season");
 
-                //For Right Now, I'm only getting the league name and season... not anything else... so filling in obvious blanks for the rest
-                this.num_players = -1;
+                //This method retreives the number of players from the database based on an already set league_season_id.
+                retrieveNum_Players(conn);
+
+                //retrieve a record for the league_season and store it.
+                Record tempRecord = new Record(user_id, this.getLeague_Season_ID(), conn);
+                this.wins = tempRecord.wins;
+                this.losses = tempRecord.losses;
+                this.pushes = tempRecord.pushes;
+                this.winnings = tempRecord.winnings;
+
+                //This still doesn't work.
                 this.position = -1;
-                this.wins = -1;
-                this.losses = -1;
-                this.pushes = -1;
-                this.winnings = -1;
+            } else //Nothing in the result set.
+            {
+                log.warning("Nothing in the result set for query.  For League_Seasons... Executed: " + strquery);
+            }
+
+        }
+        catch (SQLException e)
+        {
+            log.severe("SQL Exception on connection!");
+            log.severe(e.getMessage());
+        }
+        log.info("Finished setting up League Season: " + this.getLeague_Name());
+    }
+
+    public void retrieveNum_Players(Connection conn)
+    {
+        String strquery;
+        final Logger log = Logger.getLogger(League_Season.class.getName());
+
+        try
+        {
+            strquery = "SELECT COUNT(*) as num_players FROM league_season_user_map lsum WHERE lsum.league_season_id = " + league_season_id + ";";
+            log.info("Counting players: " + strquery);
+            ResultSet rs = conn.createStatement().executeQuery(strquery);
+            if (rs.next()) //Anything in the result set?
+            {
+                this.num_players = rs.getInt("num_players");
             }
             else //Nothing in the result set.
             {
                 log.warning("Nothing in the result set for query.  For League_Seasons... Executed: " + strquery);
             }
 
-            conn.close();
         }
         catch (SQLException e)
         {
             log.severe("SQL Exception on connection!");
-            log.severe("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
             log.severe(e.getMessage());
         }
     }

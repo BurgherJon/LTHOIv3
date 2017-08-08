@@ -34,20 +34,8 @@
        "$ref": "#/definitions/Me"
       }
      }
-    },
-    "security": [
-     {
-      "api_key": [ ]
-     }
-    ]
+    }
    }
-  }
- },
- "securityDefinitions": {
-  "api_key": {
-   "type": "apiKey",
-   "name": "key",
-   "in": "query"
   }
  },
  "definitions": {
@@ -58,6 +46,12 @@
     },
     "fname": {
      "type": "string"
+    },
+    "leagues": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/League_Season"
+     }
     },
     "linitial": {
      "type": "string"
@@ -70,6 +64,51 @@
      "format": "int32"
     },
     "pushes": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "winnings": {
+     "type": "number",
+     "format": "double"
+    },
+    "wins": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "wlong": {
+     "type": "string"
+    },
+    "wshort": {
+     "type": "string"
+    }
+   }
+  },
+  "League_Season": {
+   "properties": {
+    "league_Name": {
+     "type": "string"
+    },
+    "league_Season_ID": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "losses": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "num_Players": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "position": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "pushes": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "season": {
      "type": "integer",
      "format": "int32"
     },

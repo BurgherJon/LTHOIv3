@@ -58,19 +58,16 @@
       var apiName = 'playerapi';
       var apiVersion = 'v1';
       var apiRoot = 'https://' + window.location.host + '/_ah/api';
-      if (window.location.hostname == 'localhost'
-          || window.location.hostname == '127.0.0.1'
-          || ((window.location.port != "") && (window.location.port > 1023))) {
-            // We're probably running against the DevAppServer
+      gapi.client.setApiKey("AIzaSyDT-hXFhfRcHvmiFqEzTxaLQh2u0FY62Gc");  //Set the id Token.  This should obviously, be hidden in the actual application.
+      if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1')
+      {
+            // We're probably running against the DevAppServer so don't use https...
             apiRoot = 'http://' + window.location.host + '/_ah/api';
       }
-      var callback = function() {
-          maindisplay.innerHTML = "init Worked"; //This is just for my debugging, so if setupUser() crashes, I know where we left  off.
 
-          //Set the id Token.  This should obviously, be hidden in the actual application.
-          gapi.client.setApiKey("AIzaSyDT-hXFhfRcHvmiFqEzTxaLQh2u0FY62Gc");
-
-          setupUser();  //Replace this with whatever you want to call once everything is setup.
+      var callback = function()
+      {
+           setupUser();
       }
       gapi.client.load(apiName, apiVersion, callback, apiRoot);
     }
@@ -92,13 +89,13 @@
 
               //Setup League Options
               var display = 'Choose the league you want to work with:<br>';
-              display = display + '<Table width="100%">';
+              display = display + '<Table width="100%" border="1">';
 
               var leagues = response.leagues || [];
 
               if (leagues.length > 0)
               {
-                  display = display + + "<tr><th>Name</th><th>Wins</th><th>Losses</th><th>Pushes</th><th>Winnings</th></tr>";
+                  display = display + "<tr><th>Name</th><th>Wins</th><th>Losses</th><th>Pushes</th><th>Winnings</th></tr>";
                   for (z=0;z<leagues.length;z++)
                   {
                       display = display + "<tr><th>" + leagues[z].league_Name + "</th><th>" + leagues[z].wins + "</th><th>" + leagues[z].losses + "</th><th>" + leagues[z].pushes + "</th><th>" + leagues[z].winnings + "</th></tr>";

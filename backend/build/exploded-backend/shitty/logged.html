@@ -52,7 +52,9 @@
 
 
 <script type="text/javascript">
-    // This is called initially to setup the connection with the API
+    /*************************************************************************************/
+    /*********   This is called initially to setup the connection with the API   *********/
+    /*************************************************************************************/
     function init() {
       //This is standard Google stuff to load the API.
       var apiName = 'playerapi';
@@ -72,7 +74,9 @@
       gapi.client.load(apiName, apiVersion, callback, apiRoot);
     }
 
-    //Setup the logged in user's name.
+    /************************************************************************************/
+    /**************  Setup User and Load the Leagues They Are In  ***********************/
+    /************************************************************************************/
     function setupUser() {
          var uid = firebase.auth().currentUser.uid;
          var requestData = {};
@@ -98,7 +102,12 @@
                   display = display + "<tr><th>Name</th><th>Wins</th><th>Losses</th><th>Pushes</th><th>Winnings</th></tr>";
                   for (z=0;z<leagues.length;z++)
                   {
-                      display = display + "<tr><th>" + leagues[z].league_Name + "</th><th>" + leagues[z].wins + "</th><th>" + leagues[z].losses + "</th><th>" + leagues[z].pushes + "</th><th>" + leagues[z].winnings + "</th></tr>";
+                      display = display + "<tr><th>";
+
+                      //setup the button for that league
+                      display = display + "<button onclick='displayWeek(" + leagues[z].league_Season_ID + ", \"" + response.wshort + "\")'>" + leagues[z].league_Name + "</button>"
+
+                      display = display + "</th><th>" + leagues[z].wins + "</th><th>" + leagues[z].losses + "</th><th>" + leagues[z].pushes + "</th><th>" + leagues[z].winnings + "</th></tr>";
                   }
               }
               else
@@ -122,10 +131,20 @@
           }
         );
 
-
-
         return false;
     }
+
+
+    /***************************************************************************************************/
+    /******************** Show a Week of Potential Bets ************************************************/
+    /***************************************************************************************************/
+
+    function displayWeek(lsid, week_short)
+    {
+        maindisplay.innerHTML = lsid + " " + week_short;
+    }
+
+
 
 </script>
 

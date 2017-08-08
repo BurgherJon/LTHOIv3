@@ -17,6 +17,8 @@ import com.google.appengine.api.utils.SystemProperty;
 
 public class Me
 {
+    private String wlong;
+    private String wshort;
     private String email;
     private String fname;
     private String lname;
@@ -90,6 +92,18 @@ public class Me
             {
                 log.severe("We didn't find the firebaseid: " + firebase_uid + " throwing exception!");
                 throw new InternalServerErrorException("Firebase UID not recognized.");
+            }
+
+            strquery = "Select w.name_short as name_short, w.name_long as name_long FROM weeks w INNER JOIN sysinfo si ON si.CurrentWeek = w.id;";
+            rs = conn.createStatement().executeQuery(strquery);
+            if (rs.next()) //Anything in the result set?
+            {
+                this.wlong = rs.getString("name_short");
+                this.wshort = rs.getString("name_long");
+            }
+            else //Nothing in the result set.
+            {
+                log.severe("WTF!!! We didn't find the current week?");
             }
 
             conn.close();
@@ -189,6 +203,26 @@ public class Me
     public void setWinnings(double update)
     {
         winnings = update;
+    }
+
+    public String getWlong()
+    {
+        return wlong;
+    }
+
+    public void setWlong(String update)
+    {
+        wlong = update;
+    }
+
+    public String getWshort()
+    {
+        return wshort;
+    }
+
+    public void setWshort(String update)
+    {
+        wshort = update;
     }
 
 }

@@ -170,6 +170,12 @@
     "wins": {
      "format": "int32",
      "type": "integer"
+    },
+    "wlong": {
+     "type": "string"
+    },
+    "wshort": {
+     "type": "string"
     }
    },
    "type": "object"

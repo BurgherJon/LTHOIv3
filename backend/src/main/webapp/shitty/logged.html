@@ -102,7 +102,12 @@
                   display = display + "<tr><th>Name</th><th>Wins</th><th>Losses</th><th>Pushes</th><th>Winnings</th></tr>";
                   for (z=0;z<leagues.length;z++)
                   {
-                      display = display + "<tr><th>" + leagues[z].league_Name + "</th><th>" + leagues[z].wins + "</th><th>" + leagues[z].losses + "</th><th>" + leagues[z].pushes + "</th><th>" + leagues[z].winnings + "</th></tr>";
+                      display = display + "<tr><th>";
+
+                      //setup the button for that league
+                      display = display + "<button onclick='displayWeek(" + leagues[z].league_Season_ID + ", \"" + response.wshort + "\")'>" + leagues[z].league_Name + "</button>"
+
+                      display = display + "</th><th>" + leagues[z].wins + "</th><th>" + leagues[z].losses + "</th><th>" + leagues[z].pushes + "</th><th>" + leagues[z].winnings + "</th></tr>";
                   }
               }
               else
@@ -130,9 +135,14 @@
     }
 
 
-/***************************************************************************************************/
-/******************** Show a Week of Potential Bets ************************************************/
-/***************************************************************************************************/
+    /***************************************************************************************************/
+    /******************** Show a Week of Potential Bets ************************************************/
+    /***************************************************************************************************/
+
+    function displayWeek(lsid, week_short)
+    {
+        maindisplay.innerHTML = lsid + " " + week_short;
+    }
 
 
 

@@ -53,6 +53,15 @@
 
 <script type="text/javascript">
     /*************************************************************************************/
+    /********** Global Variables**********************************************************/
+    /*************************************************************************************/
+    var lsid = 0; //The League season that is currently logged in.
+    var week = "error";  //The short-name of the week that is being looked at.
+    var fid = "error";  //The firebase id of the current user.
+
+
+
+    /*************************************************************************************/
     /*********   This is called initially to setup the connection with the API   *********/
     /*************************************************************************************/
     function init() {
@@ -78,9 +87,9 @@
     /**************  Setup User and Load the Leagues They Are In  ***********************/
     /************************************************************************************/
     function setupUser() {
-         var uid = firebase.auth().currentUser.uid;
+         fid = firebase.auth().currentUser.uid;
          var requestData = {};
-         requestData.firebase_uid = uid;
+         requestData.firebase_uid = fid;
 
          gapi.client.playerapi.getMe(requestData).execute
          (
@@ -139,9 +148,10 @@
     /******************** Show a Week of Potential Bets ************************************************/
     /***************************************************************************************************/
 
-    function displayWeek(lsid, week_short)
+    function displayWeek()
     {
-        maindisplay.innerHTML = lsid + " " + week_short;
+        maindisplay.innerHTML = lsid + " " + week + " " + fid;
+
     }
 
 

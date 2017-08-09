@@ -26,7 +26,7 @@ Desktop Testing
 	* Note: You can also run from the command line using the task appengineStart / appengineStop, but I recommend using the Android Studio so that you can see the logs.
 * Install mysql server locally
 	* The test database is cloned from production regularly, you can import a dump from it.
-	* The code assumes the local database will be at 127.0.0.1:3306 and that the login will be root with no password.
+	* The code assumes the local database will be at 127.0.0.1:3306 and that the login will be lthoidb with "pass" as password.  If you wish to use a different setup, you can change the configuration in Environments.java, but please do not check it in.
 * You need to have two local environment variables that must match the values in appengine-web.xml.  Note that when you change these on a Windows box, you will need to restart AndroidStudio.
 	* ENDPOINTS_SERVICE_NAME e.g. "playerapi.endpoints.lthoi-test.cloud.goog"
 	* ENDPOINTS_SERVICE_VERSION e.g. "2017-08-06r0"

@@ -15,7 +15,7 @@
 
     <env-variables>
         <env-var name="ENDPOINTS_SERVICE_NAME" value="playerapi.endpoints.lthoi-test.cloud.goog" />
-        <env-var name="ENDPOINTS_SERVICE_VERSION" value="2017-08-08r0" />
+        <env-var name="ENDPOINTS_SERVICE_VERSION" value="2017-08-13r0" />
     </env-variables>
 
     <use-google-connector-j>true</use-google-connector-j>

@@ -36,9 +36,148 @@
      }
     }
    }
+  },
+  "/playerapi/v1/week/{firebase_uid}/{week}/{league_season_id}": {
+   "get": {
+    "operationId": "PlayerapiGetWeek",
+    "parameters": [
+     {
+      "name": "firebase_uid",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "week",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "league_season_id",
+      "in": "path",
+      "required": true,
+      "type": "integer",
+      "format": "int32"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/Week"
+      }
+     }
+    }
+   }
   }
  },
  "definitions": {
+  "Player": {
+   "properties": {
+    "email": {
+     "type": "string"
+    },
+    "fname": {
+     "type": "string"
+    },
+    "league_season_id": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "linitial": {
+     "type": "string"
+    },
+    "losses": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "pushes": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "winnings": {
+     "type": "number",
+     "format": "double"
+    },
+    "wins": {
+     "type": "integer",
+     "format": "int32"
+    }
+   }
+  },
+  "Game": {
+   "properties": {
+    "away_bets": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/Player"
+     }
+    },
+    "away_city": {
+     "type": "string"
+    },
+    "away_score": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "away_team": {
+     "type": "string"
+    },
+    "freeze": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "home_bets": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/Player"
+     }
+    },
+    "home_city": {
+     "type": "string"
+    },
+    "home_line": {
+     "type": "number",
+     "format": "double"
+    },
+    "home_score": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "home_team": {
+     "type": "string"
+    },
+    "id": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "isFinished": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "isLocked": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "mins_remaining": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "secs_remaining": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "start": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "user_net_home_bet": {
+     "type": "number",
+     "format": "double"
+    }
+   }
+  },
   "Me": {
    "properties": {
     "email": {
@@ -80,6 +219,34 @@
     },
     "wshort": {
      "type": "string"
+    }
+   }
+  },
+  "Week": {
+   "properties": {
+    "games": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/Game"
+     }
+    },
+    "long_Name": {
+     "type": "string"
+    },
+    "number": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "season": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "short_Name": {
+     "type": "string"
+    },
+    "start": {
+     "type": "string",
+     "format": "date-time"
     }
    }
   },

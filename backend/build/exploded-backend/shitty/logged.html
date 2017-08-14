@@ -148,9 +148,70 @@
     /******************** Show a Week of Potential Bets ************************************************/
     /***************************************************************************************************/
 
-    function displayWeek()
+    function displayWeek(intinput, strinput)
     {
+        lsid = intinput;
+        week = strinput;
+
         maindisplay.innerHTML = lsid + " " + week + " " + fid;
+
+        var requestData = {};
+        requestData.firebase_uid = fid;
+        requestData.week = week;
+        requestData.league_season_id = lsid;
+
+        gapi.client.playerapi.getWeek(requestData).execute
+        (
+         function(response)
+         {
+           if (!response.error)
+           {
+             //Display the week.
+             var display = "<h1 align='center'>" + response.long_Name + "</h1>";
+
+             //Display buttons for next or previous week.
+             //display += "<button onclick='displayWeek(" + leagues[z].league_Season_ID + ", \"" + response.wshort + "\")'>" + "Previous Week" + "</button>"
+             //display += "<button onclick='displayWeek(" + leagues[z].league_Season_ID + ", \"" + response.wshort + "\")'>" + "Next Week" + "</button>"
+
+             //Add table structure
+             display += '<Table width="100%" border="1">';
+             display += "<tr><th width='10%'></th><th width='25%'>Home Team</th><th width='7%'>Score</th><th width='16%'>Bet and Line</th><th width='7%'>Score</th><th width='25%'>Away Team</th><th width='10%'></th></tr>";
+
+             //Loop through the games
+             var games = response.games || [];
+             for (z=0;z<games.length;z++)
+             {
+                  display += "<tr>";
+
+                  //Bet button on home team.
+                  display += "<th>";
+                  display += "<button>Bet</button>";
+                  display += "</th>";
+
+                  //Display Game Data
+                  display += "<th>" + games[z].home_team + "</th>";
+                  display += "<th>" + games[z].home_score + "</th>";
+                  display += "<th>$" + parseFloat(Math.round(games[z].user_net_home_bet * 100) / 100).toFixed(2) + " at " + games[z].home_line + "</th>";
+                  display += "<th>" + games[z].away_score + "</th>";
+                  display += "<th>" + games[z].away_team + "</th>";
+
+                  //Bet button on away team.
+                  display += "<th>";
+                  display += "<button>Bet</button>";
+                  display += "</th>";
+
+                  display += "</tr>"
+             }
+
+             maindisplay.innerHTML = display;
+           }
+           else if (response.error)
+           {
+             maindisplay.innerHTML = '<b>Error Code: </b>' + response.error.code + ' [' + response.error.message + ']';
+           }
+         }
+       );
+
 
     }
 

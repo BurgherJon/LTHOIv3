@@ -68,6 +68,68 @@ public class PlayerAPI {
         return response;
     }
 
+    @ApiMethod(name = "getWeek")
+    public Week getWeek(@Named("firebase_uid") String fid, @Named("week") String week, @Named("league_season_id") int lsid)
+    {
+        String strquery;
+        Week response = new Week();
+        int user_id = 0;
+        final Logger log = Logger.getLogger(PlayerAPI.class.getName());
 
+        log.info("Retreiving Week.  league_season passed is " + lsid + ".  Week passed is " + week + ".");
+
+        Environment env = new Environment();
+        try
+        {
+            Class.forName(env.db_driver);
+        }
+        catch (ClassNotFoundException e)
+        {
+            log.severe("Unable to load database driver.");
+            log.severe(e.getMessage());
+        }
+
+        Connection conn = null;
+
+        try
+        {
+            conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);
+
+            strquery = "Select u.user_id AS uid FROM users u INNER JOIN firebaseids fids ON fids.user_id = u.user_id WHERE fids.firebase_uid = '" + fid + "';";
+            ResultSet rs = conn.createStatement().executeQuery(strquery);
+            if (rs.next())
+            {
+                user_id = rs.getInt("uid");
+            }
+            else
+            {
+                response.setShort_Name("USER AUTH FAILED");
+                return response;
+            }
+
+            strquery = "Select w.id AS week_id FROM weeks w RIGHT OUTER JOIN sysinfo si ON w.season = si.CurrentSeason WHERE name_long = '" + week + "';";
+            rs = conn.createStatement().executeQuery(strquery);
+            if (rs.next()) //Anything in the result set?
+            {
+                response = new Week(rs.getInt("week_id"), lsid, user_id, conn);
+            }
+            else //Nothing in the result set.
+            {
+                log.severe("Nothing in the result set for query.");
+                log.severe("Query Executed: " + strquery);
+            }
+
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            log.severe("SQL Exception processing!");
+            log.severe("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
+            log.severe(e.getMessage());
+        }
+
+        return response;
+
+    }
 
 }

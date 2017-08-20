@@ -132,4 +132,128 @@ public class PlayerAPI {
 
     }
 
+    @ApiMethod(name = "setBet")
+    public Bet setBet(@Named("team_name") String team_name, @Named("league_season_id") int league_season_id, @Named("firebase_uid") String fid, @Named("week") String week)
+    {
+        Bet response = new Bet();
+        String strquery;
+        int user_id = 0;
+        int home = -1;
+        final Logger log = Logger.getLogger(PlayerAPI.class.getName());
+
+        log.info("Setting bet on " + team_name + " for " + fid + " in week " + week + " in lsid: " + league_season_id + ".");
+
+        Environment env = new Environment();
+        try
+        {
+            Class.forName(env.db_driver);
+        }
+        catch (ClassNotFoundException e)
+        {
+            log.severe("Unable to load database driver.");
+            log.severe(e.getMessage());
+        }
+
+        Connection conn = null;
+
+        try
+        {
+            conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);
+
+            //find the user.
+            strquery = "Select u.user_id AS uid FROM users u INNER JOIN firebaseids fids ON fids.user_id = u.user_id WHERE fids.firebase_uid = '" + fid + "';";
+            ResultSet rs = conn.createStatement().executeQuery(strquery);
+            if (rs.next())
+            {
+                user_id = rs.getInt("uid");
+            }
+            else
+            {
+                response.setWeek_Short("USER AUTH FAILED");
+                return response;
+            }
+
+            //find the game and place the bet (the Bet constructor places the bet).
+            strquery = "SELECT g.game_id, at.name AS at, ht.name AS ht FROM games g INNER JOIN weeks w ON w.id = g.week_id INNER JOIN teams ht ON ht.team_id = g.home_team INNER JOIN sysinfo si ON si.CurrentSeason = w.season INNER JOIN teams at ON at.team_id = g.away_team WHERE (ht.name = '" + team_name + "' OR at.name = '" + team_name + "') AND w.name_long = '" + week + "';";
+            rs = conn.createStatement().executeQuery(strquery);
+            if (rs.next()) //Anything in the result set?
+            {
+                if (team_name.equals(rs.getString("ht")))
+                {
+                    home = 1;
+                }
+                else if (team_name.equals(rs.getString("at")))
+                {
+                    home = 0;
+                }
+                response = new Bet(rs.getInt("game_id"), user_id, league_season_id, home, conn);
+            }
+            else //Nothing in the result set.
+            {
+                log.severe("Nothing in the result set for query.");
+                log.severe("Query Executed: " + strquery);
+            }
+
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            log.severe("SQL Exception processing!");
+            log.severe("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
+            log.severe(e.getMessage());
+        }
+
+        return response;
+    }
+
+    @ApiMethod(name = "deleteBet")
+    public void deleteBet (@Named("team_name") String team_name, @Named("league_season_id") int league_season_id, @Named("firebase_uid") String fid, @Named("week") String week)
+    {
+        String strquery = "";
+        final Logger log = Logger.getLogger(PlayerAPI.class.getName());
+
+        log.info("In the deleteBet method.");
+
+        Environment env = new Environment();
+        try
+        {
+            Class.forName(env.db_driver);
+        }
+        catch (ClassNotFoundException e)
+        {
+            log.severe("Unable to load database driver.");
+            log.severe(e.getMessage());
+        }
+
+        Connection conn = null;
+
+        try
+        {
+            conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);
+
+            strquery = "SELECT min(b.bet_id) AS bet_id from bets b INNER JOIN games g ON g.game_id = b.game_id INNER JOIN weeks w ON w.id = g.week_id INNER JOIN firebaseids fuid ON fuid.user_id = b.user_id INNER JOIN teams ht ON g.home_team = ht.team_id INNER JOIN teams at ON g.away_team = at.team_id WHERE fuid.firebase_uid = '" + fid + "' AND b.league_season_id = " + league_season_id + " AND ((ht.name = '" + team_name + "' AND b.home = 1) OR (at.name = '" + team_name + "' AND b.home = 0)) AND w.name_long = '" + week + "';";
+            log.info("Finding the bet to remove: " + strquery);
+            ResultSet rs = conn.createStatement().executeQuery(strquery);
+
+            if (rs.next())
+            {
+                strquery = "DELETE FROM bets WHERE bet_id = " + rs.getInt("bet_id") + ";";
+                log.info("Deleting Bet: " + strquery);
+                conn.createStatement().executeUpdate(strquery);
+
+                strquery = "DELETE FROM house_bets WHERE parent_bet_id = " + rs.getInt("bet_id") + ";";
+                log.info("Deleting House Bets: " + strquery);
+                conn.createStatement().executeUpdate(strquery);
+            }
+
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            log.severe("SQL Exception processing!");
+            log.info("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
+            log.info(e.getMessage());
+        }
+    }
+
 }

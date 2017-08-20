@@ -20,6 +20,43 @@
  "id": "playerapi:v1",
  "kind": "discovery#restDescription",
  "methods": {
+  "deleteBet": {
+   "httpMethod": "DELETE",
+   "id": "playerapi.deleteBet",
+   "parameterOrder": [
+    "team_name",
+    "league_season_id",
+    "firebase_uid",
+    "week"
+   ],
+   "parameters": {
+    "team_name": {
+     "location": "path",
+     "required": true,
+     "type": "string"
+    },
+    "league_season_id": {
+     "format": "int32",
+     "location": "path",
+     "required": true,
+     "type": "integer"
+    },
+    "firebase_uid": {
+     "location": "path",
+     "required": true,
+     "type": "string"
+    },
+    "week": {
+     "location": "path",
+     "required": true,
+     "type": "string"
+    }
+   },
+   "path": "bet/{team_name}/{league_season_id}/{firebase_uid}/{week}",
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "getMe": {
    "httpMethod": "GET",
    "id": "playerapi.getMe",
@@ -70,6 +107,46 @@
    "path": "week/{firebase_uid}/{week}/{league_season_id}",
    "response": {
     "$ref": "Week"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "setBet": {
+   "httpMethod": "POST",
+   "id": "playerapi.setBet",
+   "parameterOrder": [
+    "team_name",
+    "league_season_id",
+    "firebase_uid",
+    "week"
+   ],
+   "parameters": {
+    "team_name": {
+     "location": "path",
+     "required": true,
+     "type": "string"
+    },
+    "league_season_id": {
+     "format": "int32",
+     "location": "path",
+     "required": true,
+     "type": "integer"
+    },
+    "firebase_uid": {
+     "location": "path",
+     "required": true,
+     "type": "string"
+    },
+    "week": {
+     "location": "path",
+     "required": true,
+     "type": "string"
+    }
+   },
+   "path": "setBet/{team_name}/{league_season_id}/{firebase_uid}/{week}",
+   "response": {
+    "$ref": "Bet"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
@@ -127,6 +204,61 @@
  "protocol": "rest",
  "rootUrl": "https://lthoi-test.appspot.com/_ah/api/",
  "schemas": {
+  "Bet": {
+   "id": "Bet",
+   "properties": {
+    "against_City": {
+     "type": "string"
+    },
+    "against_Team": {
+     "type": "string"
+    },
+    "id": {
+     "format": "int32",
+     "type": "integer"
+    },
+    "isHouseBet": {
+     "format": "int32",
+     "type": "integer"
+    },
+    "league_Season_ID": {
+     "format": "int32",
+     "type": "integer"
+    },
+    "line": {
+     "format": "double",
+     "type": "number"
+    },
+    "picked_City": {
+     "type": "string"
+    },
+    "picked_Team": {
+     "type": "string"
+    },
+    "result": {
+     "type": "string"
+    },
+    "start": {
+     "format": "date-time",
+     "type": "string"
+    },
+    "user_id": {
+     "format": "int32",
+     "type": "integer"
+    },
+    "week_Long": {
+     "type": "string"
+    },
+    "week_Number": {
+     "format": "int32",
+     "type": "integer"
+    },
+    "week_Short": {
+     "type": "string"
+    }
+   },
+   "type": "object"
+  },
   "Game": {
    "id": "Game",
    "properties": {

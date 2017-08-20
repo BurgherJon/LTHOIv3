@@ -185,7 +185,8 @@
 
                   //Bet button on home team.
                   display += "<th>";
-                  display += "<button>Bet</button>";
+                  display += "<button onclick='placeBet(\"" + games[z].home_team + "\")'>+</button>";
+                  display += "<button onclick='deleteBet(\"" + games[z].home_team + "\")'>-</button>";
                   display += "</th>";
 
                   //Display Game Data
@@ -197,7 +198,8 @@
 
                   //Bet button on away team.
                   display += "<th>";
-                  display += "<button>Bet</button>";
+                  display += "<button onclick='placeBet(\"" + games[z].away_team + "\")'>+</button>";
+                  display += "<button onclick='deleteBet(\"" + games[z].away_team + "\")'>-</button>";
                   display += "</th>";
 
                   display += "</tr>"
@@ -215,6 +217,68 @@
 
     }
 
+
+    /***************************************************************************************************/
+    /******************** Place a Bet, Reload Screen ***************************************************/
+    /***************************************************************************************************/
+
+    function placeBet(strTeam)
+    {
+        var requestData = {};
+        requestData.team_name = strTeam;
+        requestData.firebase_uid = fid;
+        requestData.week = week;
+        requestData.league_season_id = lsid;
+
+        gapi.client.playerapi.setBet(requestData).execute
+        (
+         function(response)
+         {
+           if (!response.error)
+           {
+             displayWeek(lsid, week);
+           }
+           else if (response.error)
+           {
+             maindisplay.innerHTML = '<b>Error Code: </b>' + response.error.code + ' [' + response.error.message + ']';
+           }
+         }
+       );
+
+
+    }
+
+
+
+    /***************************************************************************************************/
+    /******************** Remove a Bet, Reload Screen *********   ************************************************/
+    /***************************************************************************************************/
+
+    function deleteBet(strTeam)
+    {
+        var requestData = {};
+        requestData.team_name = strTeam;
+        requestData.firebase_uid = fid;
+        requestData.week = week;
+        requestData.league_season_id = lsid;
+
+        gapi.client.playerapi.deleteBet(requestData).execute
+        (
+         function(response)
+         {
+           if (!response.error)
+           {
+             displayWeek(lsid, week);
+           }
+           else if (response.error)
+           {
+             maindisplay.innerHTML = '<b>Error Code: </b>' + response.error.code + ' [' + response.error.message + ']';
+           }
+         }
+       );
+
+
+    }
 
 
 </script>

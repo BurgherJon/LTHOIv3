@@ -78,6 +78,28 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "getPlayers": {
+   "httpMethod": "GET",
+   "id": "playerapi.getPlayers",
+   "parameterOrder": [
+    "league_season_id"
+   ],
+   "parameters": {
+    "league_season_id": {
+     "format": "int32",
+     "location": "path",
+     "required": true,
+     "type": "integer"
+    }
+   },
+   "path": "playercollection/{league_season_id}",
+   "response": {
+    "$ref": "PlayerCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "getWeek": {
    "httpMethod": "GET",
    "id": "playerapi.getWeek",
@@ -451,6 +473,18 @@
     "wins": {
      "format": "int32",
      "type": "integer"
+    }
+   },
+   "type": "object"
+  },
+  "PlayerCollection": {
+   "id": "PlayerCollection",
+   "properties": {
+    "items": {
+     "items": {
+      "$ref": "Player"
+     },
+     "type": "array"
     }
    },
    "type": "object"

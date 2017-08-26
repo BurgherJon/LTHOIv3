@@ -87,7 +87,12 @@
     /**************  Setup User and Load the Leagues They Are In  ***********************/
     /************************************************************************************/
     function setupUser() {
-         fid = firebase.auth().currentUser.uid;
+         var paintside = 0;
+         if (fid != firebase.auth().currentUser.uid)
+         {
+            fid = firebase.auth().currentUser.uid;
+            paintside = 1;
+         }
          var requestData = {};
          requestData.firebase_uid = fid;
 
@@ -106,6 +111,7 @@
 
               var leagues = response.leagues || [];
 
+              //Setup the main display for the
               if (leagues.length > 0)
               {
                   display = display + "<tr><th>Name</th><th>Wins</th><th>Losses</th><th>Pushes</th><th>Winnings</th></tr>";
@@ -114,7 +120,7 @@
                       display = display + "<tr><th>";
 
                       //setup the button for that league
-                      display = display + "<button onclick='displayWeek(" + leagues[z].league_Season_ID + ", \"" + response.wshort + "\")'>" + leagues[z].league_Name + "</button>"
+                      display = display + "<button onclick='displayWeek(" + leagues[z].league_Season_ID + ", \"" + response.wshort + "\")'>" + leagues[z].league_Name + "</button>";
 
                       display = display + "</th><th>" + leagues[z].wins + "</th><th>" + leagues[z].losses + "</th><th>" + leagues[z].pushes + "</th><th>" + leagues[z].winnings + "</th></tr>";
                   }
@@ -125,6 +131,24 @@
               }
               display = display + '</Table>';
               maindisplay.innerHTML = display;
+
+              if ((paintside > 0) && (leagues.length > 0))
+              {
+                  display = "<br> <br> <br> <br>";
+
+                  for (z=0;z<leagues.length;z++)
+                  {
+                      display = display + "<p>";
+
+                      //setup the button for that league
+                      display = display + leagues[z].league_Name + "<br>";
+                      display = display + "<button onclick='displayWeek(" + leagues[z].league_Season_ID + ", \"" + response.wshort + "\")'>This Week</button><br>";
+                      display = display + "<button onclick='displayStandings(" + leagues[z].league_Season_ID + ", \"" + response.wshort + "\")'>Standings</button><br>";
+                      display = display + "</p>";
+                  }
+
+                  sidebar.innerHTML = display;
+              }
             }
             else if (response.error)
             {
@@ -276,11 +300,64 @@
            }
          }
        );
-
-
     }
 
 
+
+    /***************************************************************************************************/
+    /******************** Load Standings ***************************************************************/
+    /***************************************************************************************************/
+
+    function displayStandings(intInput)
+    {
+        lsid = intInput;
+        var requestData = {};
+        var display = "";
+        requestData.league_season_id = lsid;
+
+        gapi.client.playerapi.getPlayers(requestData).execute
+        (
+         function(response)
+         {
+            if (!response.error)
+            {
+             //Add table structure
+             display += '<Table width="100%" border="1">';
+             display += "<tr></th><th width='60%'>User</th><th width='20%'>Record</th><th width='20%'>Net Winnings</th></tr>";
+
+             //Loop through the games
+             var players = response.items || [];
+             for (z=0;z<players.length;z++)
+             {
+                  display += "<tr>";
+
+                  //Display Name.
+                  display += "<th>";
+                  display += players[z].fname + " " + players[z].linitial;
+                  display += "</th>";
+
+                  //Display Record.
+                  display += "<th>";
+                  display += players[z].wins + "-" + players[z].losses + "-" + players[z].pushes;
+                  display += "</th>";
+
+                  //Display Winnings.
+                  display += "<th>";
+                  display += "$" + parseFloat(Math.round(players[z].winnings * 100) / 100).toFixed(2);
+                  display += "</th>";
+
+                  display += "</tr>"
+             }
+
+             maindisplay.innerHTML = display;
+           }
+           else if (response.error)
+           {
+             maindisplay.innerHTML = '<b>Error Code: </b>' + response.error.code + ' [' + response.error.message + ']';
+           }
+         }
+       );
+    }
 </script>
 
 

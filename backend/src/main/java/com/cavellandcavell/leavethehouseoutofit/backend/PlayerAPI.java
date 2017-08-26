@@ -256,4 +256,61 @@ public class PlayerAPI {
         }
     }
 
+    @ApiMethod(name = "getPlayers")
+    public ArrayList<Player> getPlayers (@Named("league_season_id") int league_season_id)
+    {
+
+        ArrayList<Player> response = new ArrayList<Player>();
+        String strquery;
+        final Logger log = Logger.getLogger(PlayerAPI.class.getName());
+
+        log.info("In the getUsers method.");
+        log.info("League Season passed: " + league_season_id);
+
+        Environment env = new Environment();
+        try
+        {
+            Class.forName(env.db_driver);
+        }
+        catch (ClassNotFoundException e)
+        {
+            log.severe("Unable to load database driver.");
+            log.severe(e.getMessage());
+        }
+
+        Connection conn = null;
+
+        try
+        {
+            conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);
+
+            strquery = "Select u.email from users u INNER JOIN league_season_user_map lsum ON lsum.user_id = u.user_id WHERE lsum.league_season_id = " + league_season_id + ";";
+            ResultSet rs = conn.createStatement().executeQuery(strquery);
+            if (rs.next()) //Anything in the result set?
+            {
+                do
+                {
+                    response.add(new Player(rs.getString("email"), league_season_id, conn));
+                }
+                while (rs.next());
+            }
+            else //Nothing in the result set.
+            {
+                log.severe("Nothing in the result set for query.");
+                log.severe("Query Executed: " + strquery);
+            }
+
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            log.severe("SQL Exception processing!");
+            log.info("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
+            log.info(e.getMessage());
+        }
+
+
+        return response;
+    }
+
 }

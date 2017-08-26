@@ -49,8 +49,6 @@ public class Player
                 log.severe("Query Executed: " + strquery);
             }
 
-            conn.close();
-
             Record load = new Record(email, league_season_id, conn);
             this.wins = load.wins;
             this.losses = load.losses;

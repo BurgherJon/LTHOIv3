@@ -62,12 +62,15 @@ public class Bet
             ResultSet rs = conn.createStatement().executeQuery(strquery);
             if (rs.next())
             {
-                Calendar date = Calendar.getInstance();
+                /*Calendar date = Calendar.getInstance();
                 date.setTimeInMillis(rs.getDate("start").getTime());
                 date.add(Calendar.MINUTE, (-1 * rs.getInt("freeze_minutes")));
                 freeze = new Date();
-                freeze.setTime(date.getTimeInMillis());
-                log.info("Freeze Date: " + date.toString());
+                freeze.setTime(date.getTimeInMillis());*/
+
+                freeze = rs.getTimestamp("start");
+                freeze = new Date(freeze.getTime() - 3600 * 1000);
+                log.info("Freeze Date: " + freeze.toString());
 
                 if (freeze.before(new Date()))
                 {

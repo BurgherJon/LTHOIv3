@@ -78,12 +78,9 @@ public class Game
                 this.isFinished = rs.getInt("isFinished");
                 timetoremove = rs.getInt("freeze_minutes");
 
-                Calendar date = Calendar.getInstance();
-                date.setTimeInMillis(this.start.getTime());
-                date.add(Calendar.MINUTE, (-1 * timetoremove));
-                this.freeze = new Date();
-                this.freeze.setTime(date.getTimeInMillis());
-                log.info("Freeze Date: " + date.toString());
+                freeze = rs.getTimestamp("start");
+                freeze = new Date(freeze.getTime() - 3600 * 1000);
+                log.info("Freeze Date: " + freeze.toString());
 
                 this.isLocked = 0;
                 if (this.freeze.before(new Date()))

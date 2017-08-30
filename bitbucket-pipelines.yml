@@ -1,0 +1,7 @@
+pipelines:
+  default:
+    - step:
+        caches:
+          - gradle
+        script: 
+          - bash ./build.sh

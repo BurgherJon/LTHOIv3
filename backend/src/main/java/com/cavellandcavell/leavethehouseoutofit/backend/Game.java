@@ -59,7 +59,7 @@ public class Game
         {
 
             //TODO: This is an inefficient query as it unconditionally joins league seasons just so that I can get the seaason and freeze time values and pass it back.
-            strquery = "SELECT g.isFinished AS isFinished, ls.freeze_minutes as freeze_minutes, g.home_score as home_score, g.away_score as away_score, g.mins_remaining as mins_remaining, g.secs_remaining as secs_remaining, g.game_id AS game_id, ht.name AS home_name, ht.city AS home_city, at.name AS away_name, at.city AS away_city, w.name_short AS week_short, g.home_line AS home_line, g.start AS start FROM lthoidb.Games g INNER JOIN lthoidb.Teams at on at.team_id = g.away_team INNER JOIN lthoidb.Teams ht on ht.team_id = g.home_team INNER JOIN lthoidb.Weeks w on w.id = g.week_id INNER JOIN lthoidb.League_Seasons ls ON ls.season = w.season WHERE g.game_id = " + game_id + " AND ls.league_season_id = " + league_season_id + ";";
+            strquery = "SELECT g.isFinished AS isFinished, ls.freeze_minutes as freeze_minutes, g.home_score as home_score, g.away_score as away_score, g.mins_remaining as mins_remaining, g.secs_remaining as secs_remaining, g.game_id AS game_id, ht.name AS home_name, ht.city AS home_city, at.name AS away_name, at.city AS away_city, w.name_short AS week_short, g.home_line AS home_line, g.start AS start FROM games g INNER JOIN teams at on at.team_id = g.away_team INNER JOIN teams ht on ht.team_id = g.home_team INNER JOIN weeks w on w.id = g.week_id INNER JOIN league_seasons ls ON ls.season = w.season WHERE g.game_id = " + game_id + " AND ls.league_season_id = " + league_season_id + ";";
 
             ResultSet rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?
@@ -97,7 +97,7 @@ public class Game
 
 
             //Calculate the bet amount and the house_bet amount.
-            strquery = "SELECT MAX(ls.bet_amount) AS bet_amount, COUNT(ls.bet_amount) AS players FROM League_Seasons ls INNER JOIN League_Season_User_Map lsum ON lsum.league_season_id = ls.league_season_id WHERE lsum.league_season_id = " + league_season_id + ";";
+            strquery = "SELECT MAX(ls.bet_amount) AS bet_amount, COUNT(ls.bet_amount) AS players FROM league_seasons ls INNER JOIN league_season_user_map lsum ON lsum.league_season_id = ls.league_season_id WHERE lsum.league_season_id = " + league_season_id + ";";
             rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?
             {
@@ -116,7 +116,7 @@ public class Game
             this.home_bets = new ArrayList<Player>();
             this.away_bets = new ArrayList<Player>();
             this.user_net_home_bet = 0;
-            strquery = "SELECT b.user_id, b.home FROM Bets b WHERE b.game_id = " + this.id + " AND b.league_season_id = " + league_season_id + ";";
+            strquery = "SELECT b.user_id, b.home FROM bets b WHERE b.game_id = " + this.id + " AND b.league_season_id = " + league_season_id + ";";
             rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?
             {

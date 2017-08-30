@@ -24,6 +24,8 @@
     </welcome-file-list>
 
 
+    <!-- One set of filters for test, one for production !-->
+    <!--
     <filter>
         <filter-name>endpoints-api-configuration</filter-name>
         <filter-class>com.google.api.control.ServiceManagementConfigFilter</filter-class>
@@ -48,5 +50,33 @@
         <filter-name>endpoints-api-controller</filter-name>
         <servlet-name>EndpointsServlet</servlet-name>
     </filter-mapping>
+    -->
+
+
+    <filter>
+        <filter-name>endpoints-api-configuration</filter-name>
+        <filter-class>com.google.api.control.ServiceManagementConfigFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>endpoints-api-controller</filter-name>
+        <filter-class>com.google.api.control.extensions.appengine.GoogleAppEngineControlFilter</filter-class>
+        <init-param>
+            <param-name>endpoints.projectId</param-name>
+            <param-value>leavethehouseoutofit</param-value>
+        </init-param>
+        <init-param>
+            <param-name>endpoints.serviceName</param-name>
+            <param-value>playerapi.endpoints.leavethehouseoutofit.cloud.goog</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>endpoints-api-configuration</filter-name>
+        <servlet-name>EndpointsServlet</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>endpoints-api-controller</filter-name>
+        <servlet-name>EndpointsServlet</servlet-name>
+    </filter-mapping>
+
 
 </web-app>

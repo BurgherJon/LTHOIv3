@@ -42,16 +42,16 @@ public class Environment
 
         //If you change the test variable values you must update them here.
         String test_applicationId = "lthoi-test";
-        String test_db_url = "jdbc:mysql://184.73.39.142:3306/lthoidb";
+        String test_db_url = "jdbc:google:mysql://lthoi-test:us-central1:lthoidb/lthoidb";
         String test_db_user = "root";
-        String test_db_password = "VegasVaca2";
-        String test_db_driver = "com.mysql.jdbc.Driver";
+        String test_db_password = "lthoi-test";
+        String test_db_driver = "com.mysql.jdbc.GoogleDriver";
 
         //If you change the production values you must update them here.
         String prod_applicationId = "leavethehouseoutofit";
-        String prod_db_url = "jdbc:google:mysql://focal-acronym-94611:us-central1:lthoidb/lthoidb";
+        String prod_db_url = "jdbc:google:mysql://leavethehouseoutofit:us-central1:lthoidb/lthoidb";
         String prod_db_user = "root";
-        String prod_db_password = "!VegasVaca2!";
+        String prod_db_password = "lthoiprod";
         String prod_db_driver = "com.mysql.jdbc.GoogleDriver";
 
         final Logger log = Logger.getLogger(Environment.class.getName());

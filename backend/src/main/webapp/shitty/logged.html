@@ -13,16 +13,37 @@
 <!-- Firebase Stuff -->
 <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
 <script>
-  // Initialize Firebase, Obviously should be hidden in the real app.
-  var config = {
-    apiKey: "AIzaSyBfZ67kQFlBE8XiOcbPuCuGT0p2OQjxXTs",
-    authDomain: "lthoi-test.firebaseapp.com",
-    databaseURL: "https://lthoi-test.firebaseio.com",
-    projectId: "lthoi-test",
-    storageBucket: "lthoi-test.appspot.com",
-    messagingSenderId: "424262593373"
-  };
-  firebase.initializeApp(config);
+  //Setup Firebase
+  if (window.location.host == "leavethehouseoutofit.appspot.com")
+  {
+     var firebaseconfig =
+     {
+        apiKey: "AIzaSyDlXwwD3qMA1mi2VLSFveTTnTqQtbF2z28",
+        authDomain: "lthoi-prod.firebaseapp.com",
+        databaseURL: "https://lthoi-prod.firebaseio.com",
+        projectId: "lthoi-prod",
+        storageBucket: "lthoi-prod.appspot.com",
+        messagingSenderId: "189359336436"
+     };
+
+     googkey = "AIzaSyDqxGNR_8hSZhHtj_dOsaA5S5BncZay0NU";
+  }
+  else  //I'm not making this specific to lthoi-test because I want local to use the test configuration as well.
+  {
+     var firebaseconfig =
+     {
+        apiKey: "AIzaSyBfZ67kQFlBE8XiOcbPuCuGT0p2OQjxXTs",
+        authDomain: "lthoi-test.firebaseapp.com",
+        databaseURL: "https://lthoi-test.firebaseio.com",
+        projectId: "lthoi-test",
+        storageBucket: "lthoi-test.appspot.com",
+        messagingSenderId: "424262593373"
+     };
+
+     googkey = "AIzaSyDT-hXFhfRcHvmiFqEzTxaLQh2u0FY62Gc";
+  }
+
+  firebase.initializeApp(firebaseconfig);
 </script>
 
 </head>
@@ -40,7 +61,7 @@
         </tr>
         <tr>
             <th>
-                <div id="maindisplay" align="left"></div>
+                <div id="maindisplay" align="left">Loading...</div>
             </th>
             <th>
                 <div id="sidebar"></div>
@@ -66,10 +87,11 @@
     /*************************************************************************************/
     function init() {
       //This is standard Google stuff to load the API.
+
       var apiName = 'playerapi';
       var apiVersion = 'v1';
       var apiRoot = 'https://' + window.location.host + '/_ah/api';
-      gapi.client.setApiKey("AIzaSyDT-hXFhfRcHvmiFqEzTxaLQh2u0FY62Gc");  //Set the id Token.  This should obviously, be hidden in the actual application.
+      gapi.client.setApiKey(googkey);  //Set the id Token.  This should obviously, be hidden in the actual application.
       if (window.location.hostname == 'localhost' || window.location.hostname == '127.0.0.1')
       {
             // We're probably running against the DevAppServer so don't use https...
@@ -153,13 +175,20 @@
             else if (response.error)
             {
               //The most common error will be that someone came to the page accidentally and doesn't have an account setup (or is using a new ID).  This is returned as a 503 with the message "Firebase UID not recognized."
-              if (response.error.code == 503) //If it came back undefined they'll have to call to get setup.
+              if (response.error.message == "NO LEAGUES") //If it comes back with "NO LEAGUES" the user isn't in any leaguse.
               {
-                maindisplay.innerHTML = 'We do not recognize you with that login.  This could be for several reasons.<br>1.  You have never used that particular method to authenticate (e.g. you used to use Facebook and just used Twitter).  You can either <a href="index.html">GO BACK</a> and use the old way or email your league administrator to add this new authentication.<br>2. You\'re a new user.  Welcome!  Please email your league administrator and tell him who you are so that he can link this login method to your id.<br>3. The system isn\'t behaving properly... shame on Jonathan.';
+                maindisplay.innerHTML += '<br>No Leagues';
+                noLeagues();
               }
-
-
-              userinfo.innerHTML = '<b>Error Code: </b>' + response.error.code + ' [' + response.error.message + ']';
+              else if (response.error.message == "NO USER")
+              {
+                maindisplay.innerHTML += '<br>No User';
+                noUser();
+              }
+              else
+              {
+                maindisplay.innerHTML = 'There has been an error processing your user-id... <br>Error Code: ' + response.error.code + ' [' + response.error.message + ']';
+              }
             }
           }
         );
@@ -177,7 +206,7 @@
         lsid = intinput;
         week = strinput;
 
-        maindisplay.innerHTML = lsid + " " + week + " " + fid;
+        maindisplay.innerHTML = "Loading...";
 
         var requestData = {};
         requestData.firebase_uid = fid;
@@ -254,6 +283,8 @@
         requestData.week = week;
         requestData.league_season_id = lsid;
 
+        maindisplay.innerHTML = "Loading...";
+
         gapi.client.playerapi.setBet(requestData).execute
         (
          function(response)
@@ -286,6 +317,8 @@
         requestData.week = week;
         requestData.league_season_id = lsid;
 
+        maindisplay.innerHTML = "Loading...";
+
         gapi.client.playerapi.deleteBet(requestData).execute
         (
          function(response)
@@ -302,7 +335,139 @@
        );
     }
 
+    /***************************************************************************************************/
+    /******************** No User, Give Option to Create or Add Login Credentials **********************/
+    /***************************************************************************************************/
 
+    function noUser()
+    {
+        var display = "";
+
+        display += "The system doesn't recognize you.  This either means you are an existing user authenticating in a new way, or that you are a new user.  <br><br>Please select the appropriate option:<br>";
+        display += "<button onclick='newUser()'>New User</button><br>";
+        display += "<button onclick='newAuth()'>New Authentication Method</button>";
+
+        maindisplay.innerHTML = display;
+    }
+
+    /***************************************************************************************************/
+    /******************** Ask the user for the userID to pair ******************************************/
+    /***************************************************************************************************/
+
+    function newAuth()
+    {
+        var display = "";
+
+        display += "For this option, Jonathan should have given you a pairing ID... What was it?  ";
+        display += "<input type='text' id='userID'><br>"
+        display += "<button onclick='pairAuth()'>Submit</button>"
+
+        maindisplay.innerHTML = display;
+    }
+
+    /***************************************************************************************************/
+    /******************** Pair the Auth ****************************************************************/
+    /***************************************************************************************************/
+
+    function pairAuth()
+    {
+        var requestData = {};
+        requestData.user_id = document.getElementById("userID").value;
+        requestData.firebase_uid = fid;
+
+        maindisplay.innerHTML = "Loading..."
+
+
+        gapi.client.playerapi.newAuth(requestData).execute
+        (
+         function(response)
+         {
+           if (!response.error)
+           {
+             setupUser();
+           }
+           else if (response.error.message == "NO LEAGUES")
+           {
+              maindisplay.innerHTML += '<br>No Leagues';
+              noLeagues();
+           }
+           else
+           {
+             maindisplay.innerHTML = '<b>Error Code: </b>' + response.error.code + ' [' + response.error.message + ']';
+           }
+         }
+       );
+    }
+
+    /***************************************************************************************************/
+    /******************** Ask the user for their info **************************************************/
+    /***************************************************************************************************/
+
+    function newUser()
+    {
+        var display = "";
+
+        display += "Please provide the following:<br>";
+        display += "First Name: <input type='text' id='fname'><br>"
+        display += "Last Name: <input type='text' id='lname'><br>"
+        display += "Last Initial: <input type='text' id='linitial'><br>"
+        display += "Email: <input type='text' id='email'><br>"
+        display += "As LTHOI is Invite Only, Please Proivide Your Invite #: <input type='text' id='invite'><br>"
+        display += "<button onclick='addUser()'>Submit</button>"
+
+        maindisplay.innerHTML = display;
+    }
+
+    /***************************************************************************************************/
+    /******************** Add User *********************************************************************/
+    /***************************************************************************************************/
+
+    function addUser()
+    {
+        var requestData = {};
+        requestData.fname = document.getElementById("fname").value;
+        requestData.lname = document.getElementById("lname").value;
+        requestData.linitial = document.getElementById("linitial").value;
+        requestData.email = document.getElementById("email").value;
+        requestData.invite = document.getElementById("invite").value;
+        requestData.firebase_uid = fid;
+
+        maindisplay.innerHTML = "Loading..."
+
+
+        gapi.client.playerapi.newUser(requestData).execute
+        (
+         function(response)
+         {
+           if (!response.error)
+           {
+             setupUser();
+           }
+           else if (response.error.message == "NO LEAGUES")
+           {
+              maindisplay.innerHTML += '<br>No Leagues';
+              noLeagues();
+           }
+           else
+           {
+             maindisplay.innerHTML = '<b>Error Code: </b>' + response.error.code + ' [' + response.error.message + ']';
+           }
+         }
+       );
+    }
+
+    /***************************************************************************************************/
+    /********* No LEAGUES FOR NOW THIS SHOULD NEVER HAPPEN AS I'M ASSUMING EVERYONE IS IN ORIGINALS ****/
+    /***************************************************************************************************/
+
+    function noLeagues()
+    {
+        var display = "";
+
+        display += "This is weird, I don't have that you're in any leagues... Call Jonathan";
+
+        maindisplay.innerHTML = display;
+    }
 
     /***************************************************************************************************/
     /******************** Load Standings ***************************************************************/
@@ -314,6 +479,8 @@
         var requestData = {};
         var display = "";
         requestData.league_season_id = lsid;
+
+        maindisplay.innerHTML = "Loading...";
 
         gapi.client.playerapi.getPlayers(requestData).execute
         (

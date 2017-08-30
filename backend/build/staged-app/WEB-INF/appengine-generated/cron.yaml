@@ -1,0 +1,5 @@
+cron:
+- description: 'Update the house bets if necessary.'
+  url: /cron
+  schedule: every 1 minutes
+  timezone: UTC

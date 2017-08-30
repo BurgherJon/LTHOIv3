@@ -26,7 +26,7 @@ public class League_Season
         log.info("In the league Season constructor for " + league_season_id);
 
         try {
-            strquery = "SELECT ls.league_name, ls.season, ls.league_season_id From lthoidb.league_seasons ls WHERE ls.league_season_id = " + league_season_id + ";";
+            strquery = "SELECT ls.league_name, ls.season, ls.league_season_id From league_seasons ls WHERE ls.league_season_id = " + league_season_id + ";";
             ResultSet rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?
             {

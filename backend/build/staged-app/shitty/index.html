@@ -13,17 +13,35 @@
 <!-- Firebase Stuff -->
 <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
 <script>
-  // Initialize Firebase... Obviously this should be hidden in a real version of the application!
-  var config = {
-    apiKey: "AIzaSyBfZ67kQFlBE8XiOcbPuCuGT0p2OQjxXTs",
-    authDomain: "lthoi-test.firebaseapp.com",
-    databaseURL: "https://lthoi-test.firebaseio.com",
-    projectId: "lthoi-test",
-    storageBucket: "lthoi-test.appspot.com",
-    messagingSenderId: "424262593373"
-  };
-  firebase.initializeApp(config);
+  //Setup Firebase
+  if (window.location.host == "leavethehouseoutofit.appspot.com")
+  {
+     var firebaseconfig =
+     {
+        apiKey: "AIzaSyDlXwwD3qMA1mi2VLSFveTTnTqQtbF2z28",
+        authDomain: "lthoi-prod.firebaseapp.com",
+        databaseURL: "https://lthoi-prod.firebaseio.com",
+        projectId: "lthoi-prod",
+        storageBucket: "lthoi-prod.appspot.com",
+        messagingSenderId: "189359336436"
+     };
+  }
+  else  //I'm not making this specific to lthoi-test because I want local to use the test configuration as well.
+  {
+     var firebaseconfig =
+     {
+        apiKey: "AIzaSyBfZ67kQFlBE8XiOcbPuCuGT0p2OQjxXTs",
+        authDomain: "lthoi-test.firebaseapp.com",
+        databaseURL: "https://lthoi-test.firebaseio.com",
+        projectId: "lthoi-test",
+        storageBucket: "lthoi-test.appspot.com",
+        messagingSenderId: "424262593373"
+     };
+  }
+
+  firebase.initializeApp(firebaseconfig);
 </script>
+
 
 <script src="https://cdn.firebase.com/libs/firebaseui/2.2.0/firebaseui.js"></script>
 <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.2.0/firebaseui.css" />
@@ -34,7 +52,6 @@
         signInOptions: [
           // Leave the lines as is for the providers you want to offer your users.
           firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-          firebase.auth.EmailAuthProvider.PROVIDER_ID,
           firebase.auth.FacebookAuthProvider.PROVIDER_ID,
           firebase.auth.TwitterAuthProvider.PROVIDER_ID
         ],
@@ -75,4 +92,5 @@
 -->
 
 <script src="https://apis.google.com/js/client.js?onload=init"></script>
+
 </html>

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
-    <application>lthoi-test</application>
+
+    <!-- Option 1 for test, Option 2 for prod -->
+    <!-- <application>lthoi-test</application> -->
+    <application>leavethehouseoutofit</application>
+
+
     <version>1</version>
     <threadsafe>true</threadsafe>
 
@@ -13,10 +18,19 @@
     </system-properties>
 
 
+    <!-- First set of env-variables for test.  Second one for prod -->
+    <!--
     <env-variables>
         <env-var name="ENDPOINTS_SERVICE_NAME" value="playerapi.endpoints.lthoi-test.cloud.goog" />
-        <env-var name="ENDPOINTS_SERVICE_VERSION" value="2017-08-13r0" />
+        <env-var name="ENDPOINTS_SERVICE_VERSION" value="2017-08-28r0" />
     </env-variables>
+    -->
+
+    <env-variables>
+        <env-var name="ENDPOINTS_SERVICE_NAME" value="playerapi.endpoints.leavethehouseoutofit.cloud.goog" />
+        <env-var name="ENDPOINTS_SERVICE_VERSION" value="2017-08-28r0" />
+    </env-variables>
+
 
     <use-google-connector-j>true</use-google-connector-j>
 

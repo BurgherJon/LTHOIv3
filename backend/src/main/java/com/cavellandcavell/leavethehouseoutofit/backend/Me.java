@@ -29,27 +29,19 @@ public class Me
     private double winnings;
     private ArrayList<League_Season> leagues;
 
-    //This constructor is for testing purposes and just creates the user with the agreed to test data (see TestHarnessScenario.doc)
-    public Me(String firebase_uid) throws InternalServerErrorException
+    public Me()
+    {
+
+    }
+
+
+    public Me(String firebase_uid, Connection conn) throws InternalServerErrorException
     {
         String strquery;
         final Logger log = Logger.getLogger(Me.class.getName());
 
         log.info("In the constructor for Me with the firebase_uid passed.");
         log.info("Firebase ID: " + firebase_uid);
-
-        Environment env = new Environment();
-        try
-        {
-            Class.forName(env.db_driver);
-        }
-        catch (ClassNotFoundException e)
-        {
-            log.severe("Unable to load database driver.");
-            log.severe(e.getMessage());
-        }
-
-        Connection conn = null;
 
         try
         {
@@ -58,10 +50,8 @@ public class Me
             this.wins = 0;
             this.pushes = 0;
 
-            conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);
 
-
-            strquery = "Select u.user_id AS user_id, u.email AS email, u.fname AS fname, u.linitial AS linitial, u.lname AS lname, lsum.league_season_id AS league_season_id FROM lthoidb.Users u INNER JOIN lthoidb.League_Season_User_Map lsum ON u.user_id = lsum.user_id INNER JOIN lthoidb.firebaseids fb ON u.user_id = fb.user_id INNER JOIN league_seasons ls ON ls.league_season_id = lsum.league_season_id INNER JOIN lthoidb.sysinfo si ON ls.season = si.CurrentSeason WHERE fb.firebase_uid = '" + firebase_uid + "';";
+            strquery = "Select u.user_id AS user_id, u.email AS email, u.fname AS fname, u.linitial AS linitial, u.lname AS lname, lsum.league_season_id AS league_season_id FROM lthoidb.users u INNER JOIN lthoidb.league_season_user_map lsum ON u.user_id = lsum.user_id INNER JOIN lthoidb.firebaseids fb ON u.user_id = fb.user_id INNER JOIN league_seasons ls ON ls.league_season_id = lsum.league_season_id INNER JOIN lthoidb.sysinfo si ON ls.season = si.CurrentSeason WHERE fb.firebase_uid = '" + firebase_uid + "';";
             ResultSet rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?
             {
@@ -90,8 +80,19 @@ public class Me
             }
             else //Nothing in the result set.
             {
-                log.severe("We didn't find the firebaseid: " + firebase_uid + " throwing exception!");
-                throw new InternalServerErrorException("Firebase UID not recognized.");
+                strquery = "Select * from firebaseids fb WHERE fb.firebase_uid = '" + firebase_uid + "';";
+                rs = conn.createStatement().executeQuery(strquery);
+
+                if (rs.next())
+                {
+                    log.severe("The FirebaseID does exist, but isn't any leagues: " + firebase_uid + " throwing exception!");
+                    throw new InternalServerErrorException("NO LEAGUES");
+                }
+                else
+                {
+                    log.severe("The FirebaseID does not exist: " + firebase_uid + " throwing exception!");
+                    throw new InternalServerErrorException("NO USER");
+                }
             }
 
             strquery = "Select w.name_short as name_short, w.name_long as name_long FROM weeks w INNER JOIN sysinfo si ON si.CurrentWeek = w.id;";
@@ -108,10 +109,13 @@ public class Me
 
             conn.close();
         }
-        catch (Exception e)
+        catch (InternalServerErrorException e)
+        {
+            throw e;
+        }
+        catch (SQLException e)
         {
             log.severe("SQL Exception processing!");
-            log.severe("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
             log.severe(e.getMessage());
         }
 

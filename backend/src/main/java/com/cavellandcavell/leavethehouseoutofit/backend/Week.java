@@ -39,7 +39,7 @@ public class Week
 
         try
         {
-            strquery = "Select * From lthoidb.Weeks WHERE id = '" + id + "';";
+            strquery = "Select * From weeks WHERE id = '" + id + "';";
             ResultSet rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?
             {

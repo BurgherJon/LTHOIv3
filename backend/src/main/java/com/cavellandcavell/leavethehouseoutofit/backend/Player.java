@@ -36,7 +36,7 @@ public class Player
 
         try
         {
-            strquery = "Select * From lthoidb.Users WHERE email = '" + email + "';";
+            strquery = "Select * From users WHERE email = '" + email + "';";
             ResultSet rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?
             {
@@ -75,7 +75,7 @@ public class Player
 
         try
         {
-            strquery = "Select * From lthoidb.Users WHERE user_id = '" + user_id + "';";
+            strquery = "Select * From users WHERE user_id = '" + user_id + "';";
             ResultSet rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?
             {

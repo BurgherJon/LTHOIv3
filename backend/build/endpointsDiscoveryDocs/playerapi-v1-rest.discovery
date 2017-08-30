@@ -9,7 +9,7 @@
   }
  },
  "basePath": "/_ah/api/playerapi/v1/",
- "baseUrl": "https://lthoi-test.appspot.com/_ah/api/playerapi/v1/",
+ "baseUrl": "https://leavethehouseoutofit.appspot.com/_ah/api/playerapi/v1/",
  "batchPath": "batch",
  "description": "This is an API",
  "discoveryVersion": "v1",
@@ -20,6 +20,14 @@
  "id": "playerapi:v1",
  "kind": "discovery#restDescription",
  "methods": {
+  "cronJob": {
+   "httpMethod": "POST",
+   "id": "playerapi.cronJob",
+   "path": "cronJob",
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "deleteBet": {
    "httpMethod": "DELETE",
    "id": "playerapi.deleteBet",
@@ -134,6 +142,96 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "healthcheck": {
+   "httpMethod": "GET",
+   "id": "playerapi.healthcheck",
+   "path": "health",
+   "response": {
+    "$ref": "Health"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "newAuth": {
+   "httpMethod": "POST",
+   "id": "playerapi.newAuth",
+   "parameterOrder": [
+    "firebase_uid",
+    "user_id"
+   ],
+   "parameters": {
+    "firebase_uid": {
+     "location": "path",
+     "required": true,
+     "type": "string"
+    },
+    "user_id": {
+     "format": "int32",
+     "location": "path",
+     "required": true,
+     "type": "integer"
+    }
+   },
+   "path": "newAuth/{firebase_uid}/{user_id}",
+   "response": {
+    "$ref": "Me"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "newUser": {
+   "httpMethod": "POST",
+   "id": "playerapi.newUser",
+   "parameterOrder": [
+    "firebase_uid",
+    "fname",
+    "lname",
+    "linitial",
+    "email",
+    "invite"
+   ],
+   "parameters": {
+    "firebase_uid": {
+     "location": "path",
+     "required": true,
+     "type": "string"
+    },
+    "fname": {
+     "location": "path",
+     "required": true,
+     "type": "string"
+    },
+    "lname": {
+     "location": "path",
+     "required": true,
+     "type": "string"
+    },
+    "linitial": {
+     "location": "path",
+     "required": true,
+     "type": "string"
+    },
+    "email": {
+     "location": "path",
+     "required": true,
+     "type": "string"
+    },
+    "invite": {
+     "location": "path",
+     "required": true,
+     "type": "string"
+    }
+   },
+   "path": "newUser/{firebase_uid}/{fname}/{lname}/{linitial}/{email}/{invite}",
+   "response": {
+    "$ref": "Me"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "setBet": {
    "httpMethod": "POST",
    "id": "playerapi.setBet",
@@ -224,7 +322,7 @@
   }
  },
  "protocol": "rest",
- "rootUrl": "https://lthoi-test.appspot.com/_ah/api/",
+ "rootUrl": "https://leavethehouseoutofit.appspot.com/_ah/api/",
  "schemas": {
   "Bet": {
    "id": "Bet",
@@ -351,6 +449,15 @@
     "user_net_home_bet": {
      "format": "double",
      "type": "number"
+    }
+   },
+   "type": "object"
+  },
+  "Health": {
+   "id": "Health",
+   "properties": {
+    "status": {
+     "type": "string"
     }
    },
    "type": "object"

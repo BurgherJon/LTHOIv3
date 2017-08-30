@@ -147,7 +147,7 @@ public class Bet
 
 
             //Setup the bet object
-            strquery = "SELECT max(b.bet_id) AS bet_id, b.league_season_id AS league_season_id, g.start AS start, w.number AS week_number, w.name_short AS week_short, w.name_long AS week_long, ht.name AS home_team, at.name AS away_team, ht.city AS home_city, at.city AS away_city, g.home_line AS home_line FROM Bets b INNER JOIN Games g ON b.game_id = g.game_id INNER JOIN Weeks w ON g.week_id = w.id INNER JOIN Teams ht ON ht.team_id = g.home_team INNER JOIN Teams at ON at.team_id = g.away_team WHERE b.game_id = " + game_id + " AND b.user_id = " + user_id + " AND b.league_season_id = " + lsid + ";";
+            strquery = "SELECT max(b.bet_id) AS bet_id, b.league_season_id AS league_season_id, g.start AS start, w.number AS week_number, w.name_short AS week_short, w.name_long AS week_long, ht.name AS home_team, at.name AS away_team, ht.city AS home_city, at.city AS away_city, g.home_line AS home_line FROM bets b INNER JOIN games g ON b.game_id = g.game_id INNER JOIN weeks w ON g.week_id = w.id INNER JOIN teams ht ON ht.team_id = g.home_team INNER JOIN teams at ON at.team_id = g.away_team WHERE b.game_id = " + game_id + " AND b.user_id = " + user_id + " AND b.league_season_id = " + lsid + ";";
             log.info("Finding Data: " + strquery);
             rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?
@@ -198,8 +198,7 @@ public class Bet
         this.id = id;
     }
 
-    /*
-    public void generatehousebets(int usernum)
+    public void generatehousebets(int usernum, Connection conn)
     {
         final Logger log = Logger.getLogger(Bet.class.getName());
 
@@ -215,39 +214,9 @@ public class Bet
 
         try
         {
-            if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production)
-            {
-                // Load the class that provides the new "jdbc:google:mysql://" prefix.
-                Class.forName("com.mysql.jdbc.GoogleDriver");
-                strurl = "jdbc:google:mysql://focal-acronym-94611:us-central1:lthoidb/lthoidb";
-                struser = "root";
-                strpass = "!VegasVaca2!";
-            }
-            else
-            {
-                //Local MySQL Instance to use during Dev.
-                Class.forName("com.mysql.jdbc.Driver");
-                strurl = "jdbc:mysql://127.0.0.1:3306/lthoidb";
-                struser = "root";
-                log.info("Running locally!");
-            }
-        }
-        catch (ClassNotFoundException e)
-        {
-            log.severe("Unable to create connection string for the database.");
-            log.severe(e.getMessage());
-        }
-
-
-
-        Connection conn = null;
-
-        try
-        {
-            conn = DriverManager.getConnection(strurl, struser, strpass);
 
             //Going to require a select query to get all of the users.
-            strquery = "SELECT lsum.user_id, ls.bet_amount FROM League_Season_User_Map lsum INNER JOIN League_Seasons ls ON ls.league_season_id = lsum.league_season_id  WHERE lsum.league_season_id = " + this.league_season_id + ";";
+            strquery = "SELECT lsum.user_id, ls.bet_amount FROM league_season_user_map lsum INNER JOIN league_seasons ls ON ls.league_season_id = lsum.league_season_id  WHERE lsum.league_season_id = " + this.league_season_id + ";";
 
             ResultSet rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?
@@ -283,10 +252,6 @@ public class Bet
                 conn.createStatement().executeUpdate(strquery);
             }
 
-
-
-
-            conn.close();
         }
         catch (SQLException e)
         {
@@ -295,7 +260,7 @@ public class Bet
             log.info(e.getMessage());
         }
     }
-    */
+
 
     public int getId()
     {

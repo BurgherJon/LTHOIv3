@@ -2,9 +2,9 @@
  "swagger": "2.0",
  "info": {
   "version": "1.0.0",
-  "title": "playerapi.endpoints.lthoi-test.cloud.goog"
+  "title": "playerapi.endpoints.leavethehouseoutofit.cloud.goog"
  },
- "host": "playerapi.endpoints.lthoi-test.cloud.goog",
+ "host": "playerapi.endpoints.leavethehouseoutofit.cloud.goog",
  "basePath": "/_ah/api",
  "schemes": [
   "https"
@@ -16,6 +16,68 @@
   "application/json"
  ],
  "paths": {
+  "/playerapi/v1/bet/{team_name}/{league_season_id}/{firebase_uid}/{week}": {
+   "delete": {
+    "operationId": "PlayerapiDeleteBet",
+    "parameters": [
+     {
+      "name": "team_name",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "league_season_id",
+      "in": "path",
+      "required": true,
+      "type": "integer",
+      "format": "int32"
+     },
+     {
+      "name": "firebase_uid",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "week",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "A successful response"
+     }
+    }
+   }
+  },
+  "/playerapi/v1/cronJob": {
+   "post": {
+    "operationId": "PlayerapiCronJob",
+    "parameters": [ ],
+    "responses": {
+     "200": {
+      "description": "A successful response"
+     }
+    }
+   }
+  },
+  "/playerapi/v1/health": {
+   "get": {
+    "operationId": "PlayerapiGetStatus",
+    "parameters": [ ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/Health"
+      }
+     }
+    }
+   }
+  },
   "/playerapi/v1/me/{firebase_uid}": {
    "get": {
     "operationId": "PlayerapiGetMe",
@@ -32,6 +94,147 @@
       "description": "A successful response",
       "schema": {
        "$ref": "#/definitions/Me"
+      }
+     }
+    }
+   }
+  },
+  "/playerapi/v1/newAuth/{firebase_uid}/{user_id}": {
+   "post": {
+    "operationId": "PlayerapiNewAuth",
+    "parameters": [
+     {
+      "name": "firebase_uid",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "user_id",
+      "in": "path",
+      "required": true,
+      "type": "integer",
+      "format": "int32"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/Me"
+      }
+     }
+    }
+   }
+  },
+  "/playerapi/v1/newUser/{firebase_uid}/{fname}/{lname}/{linitial}/{email}/{invite}": {
+   "post": {
+    "operationId": "PlayerapiNewUser",
+    "parameters": [
+     {
+      "name": "firebase_uid",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "fname",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lname",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "linitial",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "email",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "invite",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/Me"
+      }
+     }
+    }
+   }
+  },
+  "/playerapi/v1/playercollection/{league_season_id}": {
+   "get": {
+    "operationId": "PlayerapiGetPlayers",
+    "parameters": [
+     {
+      "name": "league_season_id",
+      "in": "path",
+      "required": true,
+      "type": "integer",
+      "format": "int32"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/PlayerCollection"
+      }
+     }
+    }
+   }
+  },
+  "/playerapi/v1/setBet/{team_name}/{league_season_id}/{firebase_uid}/{week}": {
+   "post": {
+    "operationId": "PlayerapiSetBet",
+    "parameters": [
+     {
+      "name": "team_name",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "league_season_id",
+      "in": "path",
+      "required": true,
+      "type": "integer",
+      "format": "int32"
+     },
+     {
+      "name": "firebase_uid",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "week",
+      "in": "path",
+      "required": true,
+      "type": "string"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "A successful response",
+      "schema": {
+       "$ref": "#/definitions/Bet"
       }
      }
     }
@@ -73,6 +276,59 @@
   }
  },
  "definitions": {
+  "Bet": {
+   "properties": {
+    "against_City": {
+     "type": "string"
+    },
+    "against_Team": {
+     "type": "string"
+    },
+    "id": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "isHouseBet": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "league_Season_ID": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "line": {
+     "type": "number",
+     "format": "double"
+    },
+    "picked_City": {
+     "type": "string"
+    },
+    "picked_Team": {
+     "type": "string"
+    },
+    "result": {
+     "type": "string"
+    },
+    "start": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "user_id": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "week_Long": {
+     "type": "string"
+    },
+    "week_Number": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "week_Short": {
+     "type": "string"
+    }
+   }
+  },
   "Player": {
    "properties": {
     "email": {
@@ -178,6 +434,13 @@
     }
    }
   },
+  "Health": {
+   "properties": {
+    "status": {
+     "type": "string"
+    }
+   }
+  },
   "Me": {
    "properties": {
     "email": {
@@ -219,6 +482,16 @@
     },
     "wshort": {
      "type": "string"
+    }
+   }
+  },
+  "PlayerCollection": {
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/Player"
+     }
     }
    }
   },

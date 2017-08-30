@@ -63,8 +63,151 @@ public class PlayerAPI {
     public Me getMe(@Named("firebase_uid") String user_uid) throws InternalServerErrorException {
         final Logger log = Logger.getLogger(PlayerAPI.class.getName());
         log.info("Running the GetMe function");
+        Me response = new Me();
 
-        Me response = new Me(user_uid);
+        Environment env = new Environment();
+        try
+        {
+            Class.forName(env.db_driver);
+        }
+        catch (ClassNotFoundException e)
+        {
+            log.severe("Unable to load database driver.");
+            log.severe(e.getMessage());
+        }
+
+        Connection conn;
+
+        try
+        {
+            conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);
+
+            response = new Me(user_uid, conn);
+
+            conn.close();
+        }
+        catch (InternalServerErrorException e)
+        {
+            throw e;
+        }
+        catch (SQLException e)
+        {
+            log.severe("SQL Exception processing!");
+            log.severe("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
+            log.severe(e.getMessage());
+        }
+
+        return response;
+    }
+
+    /**
+     * Add a new user.
+     */
+    @ApiMethod(name = "newUser")
+    public Me newUser(@Named("firebase_uid") String user_uid, @Named("fname") String fname, @Named("lname") String lname, @Named("linitial") String linitial, @Named("email") String email, @Named("invite") String invite) throws InternalServerErrorException
+    {
+        String strquery;
+        final Logger log = Logger.getLogger(PlayerAPI.class.getName());
+        int user_id;
+        Me response = new Me();
+
+        log.info("Adding a User with fname " + fname + " lname " + lname + " linitial " + linitial + " email " + email + " invite " + invite);
+
+        if (invite.equals("password"))
+        {
+            Environment env = new Environment();
+            try
+            {
+                Class.forName(env.db_driver);
+            }
+            catch (ClassNotFoundException e)
+            {
+                log.severe("Unable to load database driver.");
+                log.severe(e.getMessage());
+            }
+
+            Connection conn = null;
+
+            try
+            {
+                conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);
+
+                strquery = "INSERT INTO users (email, fname, linitial, lname) VALUES ('" + email + "', '" + fname + "', '" + linitial + "', '" + lname + "');";
+                log.info(strquery);
+                conn.createStatement().executeUpdate(strquery);
+
+                strquery = "SELECT * FROM users WHERE email = '" + email + "';";
+                ResultSet rs = conn.createStatement().executeQuery(strquery);
+
+                if (rs.next())
+                {
+                    strquery = "INSERT INTO firebaseids (firebase_uid, user_id) VALUES ('" + user_uid + "', " + rs.getInt("user_id") + ");";
+                    log.info(strquery);
+                    conn.createStatement().executeUpdate(strquery);
+
+                    strquery = "INSERT INTO league_season_user_map (user_id, league_season_id) VALUES (" + rs.getInt("user_id") + ", 8);";
+                    log.info(strquery);
+                    conn.createStatement().executeUpdate(strquery);
+                }
+                response = new Me(user_uid, conn);
+
+                conn.close();
+            }
+            catch (SQLException e)
+            {
+                log.severe("SQL Exception processing!");
+                log.severe("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
+                log.severe(e.getMessage());
+            }
+        }
+
+        return response;
+    }
+
+
+
+    /**
+     * An endpoint that takes a user ID and adds a new authentication to it, then returns the user.
+     */
+    @ApiMethod(name = "newAuth")
+    public Me newAuth(@Named("firebase_uid") String user_uid, @Named("user_id") int user_id) throws InternalServerErrorException {
+        String strquery;
+        final Logger log = Logger.getLogger(PlayerAPI.class.getName());
+        Me response = new Me();
+
+        log.info("Pairing Firebase_ID: " + user_uid + "with email address: " + user_id + ".");
+
+        Environment env = new Environment();
+        try
+        {
+            Class.forName(env.db_driver);
+        }
+        catch (ClassNotFoundException e)
+        {
+            log.severe("Unable to load database driver.");
+            log.severe(e.getMessage());
+        }
+
+        Connection conn = null;
+
+        try
+        {
+            conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);
+
+            strquery = "INSERT INTO firebaseids (firebase_uid, user_id) VALUES ('" + user_uid + "', " + user_id + ");";
+            conn.createStatement().executeUpdate(strquery);
+
+            response = new Me(user_uid, conn);
+
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            log.severe("SQL Exception processing!");
+            log.severe("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
+            log.severe(e.getMessage());
+        }
+
         return response;
     }
 
@@ -311,6 +454,101 @@ public class PlayerAPI {
 
 
         return response;
+    }
+
+    //The sloppy part about this is that there is no transactionality.  If it fails after processing x house bets
+    //but before the last one, then the next run of the cronjub will process duplicate house bets.
+    @ApiMethod(name = "cronJob")
+    public void cronJob ()
+    {
+        String strquery;
+        int updates = 0;
+        Bet workingbet;
+        final Logger log = Logger.getLogger(PlayerAPI.class.getName());
+
+        log.info("In the Cron Job.");
+
+        Environment env = new Environment();
+        try
+        {
+            Class.forName(env.db_driver);
+        }
+        catch (ClassNotFoundException e)
+        {
+            log.severe("Unable to load database driver.");
+            log.severe(e.getMessage());
+        }
+
+        Connection conn = null;
+
+        try
+        {
+            conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);
+
+            //Query will be updated to determine if there are any games that need to be frozen.
+            strquery = "SELECT b.bet_id, b.league_season_id, b.user_id FROM Bets b WHERE b.game_id IN (SELECT g.game_id FROM Games g WHERE g.START <= NOW() - INTERVAL (SELECT ls.freeze_minutes FROM League_Seasons ls WHERE ls.league_season_id = b.league_season_id) MINUTE) AND (b.hbprocessed <> 1 OR b.hbprocessed IS NULL);";
+            log.info("Made connection, going to run: " + strquery);
+            ResultSet rs = conn.createStatement().executeQuery(strquery);
+            if (rs.next()) //Anything in the result set?
+            {
+                strquery = "UPDATE Bets SET hbprocessed = 1 WHERE bet_id IN (";
+                log.info("found games to update, stepping through them.");
+                do
+                {
+                    //Generate the house bets
+                    log.info("Working with bet: " + rs.getInt("bet_id"));
+                    workingbet = new Bet(rs.getInt("bet_id"));
+                    workingbet.setLeague_Season_ID(rs.getInt("league_season_id"));
+                    workingbet.generatehousebets(rs.getInt("user_id"), conn);
+
+                    //Update the query to mark the house bets processed.
+                    if (updates == 0)
+                    {
+                        strquery = strquery + workingbet.getId();
+                    }
+                    else
+                    {
+                        strquery = strquery + ", " + workingbet.getId();
+                    }
+
+                    //Note that there is at least one that needs to be updated.
+                    updates = 1;
+                }
+                while (rs.next());
+
+                //Finish the query and run it if there were updates.
+                if (updates == 1)
+                {
+                    strquery = strquery + ");";
+
+                    //Run the update query.
+                    conn.createStatement().executeUpdate(strquery);
+                }
+            }
+            else //Nothing in the result set.
+            {
+                log.severe("No house bets necessary.");
+                log.severe("Query Executed: " + strquery);
+            }
+
+            conn.close();
+        }
+        catch (SQLException e)
+        {
+            log.severe("SQL Exception processing!");
+            log.info("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
+            log.severe(e.getMessage());
+        }
+
+    }
+
+    /**
+     * A simple method that can be hit to test the system is live.
+     */
+    @ApiMethod(name = "healthcheck")
+    public Health getStatus()
+    {
+        return new Health();
     }
 
 }

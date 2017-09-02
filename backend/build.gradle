@@ -37,7 +37,14 @@ repositories {   // repositories for Jar's you access in your code
     jcenter()
 }
 
+appengine {
 
+    deploy {   // deploy configuration
+        stopPreviousVersion = true  // default - stop the current version
+        promote = true              // default - & make this the current version
+    }
+
+}
 
 dependencies {
     // Apengine Stuff

@@ -24,8 +24,6 @@
     </welcome-file-list>
 
 
-    <!-- One set of filters for test, one for production !-->
-
     <filter>
         <filter-name>endpoints-api-configuration</filter-name>
         <filter-class>com.google.api.control.ServiceManagementConfigFilter</filter-class>
@@ -52,6 +50,7 @@
     </filter-mapping>
 
 
+    <!-- One set of filters for test, one for production !-->
     <!--
     <filter>
         <filter-name>endpoints-api-configuration</filter-name>

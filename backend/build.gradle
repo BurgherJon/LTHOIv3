@@ -75,8 +75,8 @@ dependencies {
 // [START endpoints-server]
 endpointsServer {
     // Endpoints Framework Plugin server-side configuration... Change for production
-    //hostname = "lthoi-test.appspot.com"
-    hostname = "leavethehouseoutofit.appspot.com"
+    hostname = "lthoi-test.appspot.com"
+    //hostname = "leavethehouseoutofit.appspot.com"
 }
 // [END endpoints-server]
 

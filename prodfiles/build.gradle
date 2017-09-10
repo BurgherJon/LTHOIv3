@@ -1,0 +1,93 @@
+apply plugin: 'java'                              // standard Java tasks
+apply plugin: 'war'                               // standard Web Archive plugin
+// [START apply_appengine]
+apply plugin: 'com.google.cloud.tools.appengine'  // App Engine tasks
+// [END apply_appengine]
+
+
+// [START apply_endpoints-framework-server]
+apply plugin: 'com.google.cloud.tools.endpoints-framework-server'
+// [END apply_endpoints-framework-server]
+
+// [START buildscript]
+buildscript {    // Configuration for building
+    repositories {
+        mavenCentral()
+        jcenter()    // Bintray's repository - a fast Maven Central mirror & more
+    }
+    dependencies {
+        // App Engine Gradle plugin
+        classpath 'com.google.cloud.tools:appengine-gradle-plugin:+'
+
+        //App Engine Tools
+        classpath 'com.google.appengine:appengine-tools-sdk:+'
+
+        // Endpoints Frameworks Gradle plugin
+        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:+'
+
+        // MYSQL
+        classpath 'mysql:mysql-connector-java:5.1.6'
+
+    }
+}
+// [END buildscript]
+
+repositories {   // repositories for Jar's you access in your code
+    mavenCentral()
+    jcenter()
+}
+
+appengine {
+
+    deploy {   // deploy configuration
+        stopPreviousVersion = true  // default - stop the current version
+        promote = true              // default - & make this the current version
+    }
+
+}
+
+dependencies {
+    // Apengine Stuff
+    compile group: 'com.google.appengine', name: 'appengine-tools-sdk', version: '1.9.54'
+
+    providedCompile group: 'javax.servlet', name: 'servlet-api', version:'2.5'
+    compile 'jstl:jstl:1.2'
+    compile group: 'javax.inject', name: 'javax.inject', version: '1'
+
+    // Endpoints Frameworks v2.0
+    // [START endpoints-tools]
+    compile group: 'com.google.endpoints', name: 'endpoints-framework', version: '2.0.7'
+
+    //Adding API Management
+    compile group: 'com.google.endpoints', name: 'endpoints-management-control-appengine', version: '1.0.4'
+    compile group: 'com.google.endpoints', name: 'endpoints-framework-auth', version: '1.0.4'
+
+    // [END endpoints-tools]
+    // End of Endpoints Frameworks v2.0
+
+    //jdbc driver
+    compile 'com.google.cloud.sql:mysql-socket-factory:1.0.3'
+
+    //Google MySQL Socket Factory
+    compile group: 'com.google.cloud.sql', name: 'mysql-socket-factory', version: '1.0.0-beta1'
+}
+
+// [START endpoints-server]
+endpointsServer {
+    // Endpoints Framework Plugin server-side configuration... Change for production
+    //hostname = "lthoi-test.appspot.com"
+    hostname = "leavethehouseoutofit.appspot.com"
+}
+// [END endpoints-server]
+
+group   = 'com.cavellandcavell.leavethehouseoutofit' // Generated output GroupId
+version = '1'                          // Version in generated output
+
+sourceCompatibility = 1.7     // App Engine Standard uses Java 7
+targetCompatibility = 1.7     // App Engine Standard uses Java 7
+
+
+
+
+
+

@@ -36,7 +36,7 @@ public class Record
 
         try
         {
-            strquery = "Select g.home_line AS home_line, b.home AS home, b.bet_amount AS bet_amount, g.home_score AS home_score, g.away_score AS away_score, g.isfinished AS isFinished FROM bets b INNER JOIN Games g ON g.game_id = b.game_id INNER JOIN users u ON u.user_id = b.user_id INNER JOIN firebaseids fid ON u.user_id = fid.user_id WHERE b.league_season_id = " + league_season_id + " AND fid.firebase_uid = '" + uid + "';";
+            strquery = "Select g.home_line AS home_line, b.home AS home, b.bet_amount AS bet_amount, g.home_score AS home_score, g.away_score AS away_score, g.isfinished AS isFinished FROM bets b INNER JOIN games g ON g.game_id = b.game_id INNER JOIN users u ON u.user_id = b.user_id INNER JOIN firebaseids fid ON u.user_id = fid.user_id WHERE b.league_season_id = " + league_season_id + " AND fid.firebase_uid = '" + uid + "';";
 
             ResultSet rs = conn.createStatement().executeQuery(strquery);
             log.info("Loaded the query for bets.");

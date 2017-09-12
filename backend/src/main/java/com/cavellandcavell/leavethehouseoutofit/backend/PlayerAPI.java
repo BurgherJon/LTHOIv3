@@ -486,7 +486,7 @@ public class PlayerAPI {
             conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);
 
             //Query will be updated to determine if there are any games that need to be frozen.
-            strquery = "SELECT b.bet_id, b.league_season_id, b.user_id FROM Bets b WHERE b.game_id IN (SELECT g.game_id FROM Games g WHERE g.START <= NOW() - INTERVAL (SELECT ls.freeze_minutes FROM League_Seasons ls WHERE ls.league_season_id = b.league_season_id) MINUTE) AND (b.hbprocessed <> 1 OR b.hbprocessed IS NULL);";
+            strquery = "SELECT b.bet_id, b.league_season_id, b.user_id FROM bets b WHERE b.game_id IN (SELECT g.game_id FROM Games g WHERE g.START <= NOW() - INTERVAL (SELECT ls.freeze_minutes FROM league_seasons ls WHERE ls.league_season_id = b.league_season_id) MINUTE) AND (b.hbprocessed <> 1 OR b.hbprocessed IS NULL);";
             log.info("Made connection, going to run: " + strquery);
             ResultSet rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?

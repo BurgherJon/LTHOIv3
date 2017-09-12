@@ -491,7 +491,7 @@ public class PlayerAPI {
             ResultSet rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?
             {
-                strquery = "UPDATE Bets SET hbprocessed = 1 WHERE bet_id IN (";
+                strquery = "UPDATE bets SET hbprocessed = 1 WHERE bet_id IN (";
                 log.info("found games to update, stepping through them.");
                 do
                 {

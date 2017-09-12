@@ -247,7 +247,7 @@ public class Bet
             log.info("To the inserts.");
             for (index = 0; index < players.size(); index++)
             {
-                strquery = "INSERT INTO House_Bets (parent_bet_id, user_id, bet_amount) VALUES (" + this.id + ", " + players.get(index) + ", " + bet_amount + ");";
+                strquery = "INSERT INTO house_bets (parent_bet_id, user_id, bet_amount) VALUES (" + this.id + ", " + players.get(index) + ", " + bet_amount + ");";
                 log.info("Adding one to DB: " + strquery);
                 conn.createStatement().executeUpdate(strquery);
             }

@@ -65,6 +65,7 @@ public class Player
     public Player(int user_id, int league_season_id, Connection conn)
     {
         String strquery;
+        String fid = "";
         final Logger log = Logger.getLogger(Player.class.getName());
 
         log.info("In the constructor for User that's based on user_id.");
@@ -75,13 +76,15 @@ public class Player
 
         try
         {
-            strquery = "Select * From users WHERE user_id = '" + user_id + "';";
+            strquery = "SELECT * FROM users u INNER JOIN firebaseids fid ON fid.user_id = u.user_id WHERE u.user_id =" + user_id + ";";
             ResultSet rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?
             {
                 this.setFname(rs.getString("fname"));
                 this.setLinitial(rs.getString("linitial"));
                 this.setEmail(rs.getString("email"));
+                //TODO: I need to add optionality to not have to pass the firebase id... It's sloppy, but I don't want have to build a new record constructor.
+                fid = rs.getString("firebase_uid");
             }
             else //Nothing in the result set.
             {
@@ -89,7 +92,7 @@ public class Player
                 log.severe("Query Executed: " + strquery);
             }
 
-            Record load = new Record(this.email, league_season_id, conn);
+            Record load = new Record(fid, league_season_id, conn);
             this.wins = load.wins;
             this.losses = load.losses;
             this.pushes = load.pushes;

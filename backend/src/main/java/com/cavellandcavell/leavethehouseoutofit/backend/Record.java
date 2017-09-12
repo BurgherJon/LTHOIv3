@@ -92,7 +92,7 @@ public class Record
             }
             log.info("Finished processing bets.");
 
-            strquery = "SELECT g.home_line AS home_line, b.home AS home, hb.bet_amount AS bet_amount, g.home_score AS home_score, g.away_score AS away_score, g.isfinished AS isFinished FROM House_Bets hb INNER JOIN Users u ON u.user_id = hb.user_id INNER JOIN Bets b ON b.bet_id = hb.parent_bet_id INNER JOIN Games g ON g.game_id = b.game_id INNER JOIN firebaseids fid ON fid.user_id = u.user_id WHERE b.league_season_id = " + league_season_id + " AND fid.firebase_uid = '" + uid + "';";
+            strquery = "SELECT g.home_line AS home_line, b.home AS home, hb.bet_amount AS bet_amount, g.home_score AS home_score, g.away_score AS away_score, g.isfinished AS isFinished FROM house_bets hb INNER JOIN users u ON u.user_id = hb.user_id INNER JOIN bets b ON b.bet_id = hb.parent_bet_id INNER JOIN games g ON g.game_id = b.game_id INNER JOIN firebaseids fid ON fid.user_id = u.user_id WHERE b.league_season_id = " + league_season_id + " AND fid.firebase_uid = '" + uid + "';";
             log.info("Query for House Bets: " + strquery);
 
             rs = conn.createStatement().executeQuery(strquery);

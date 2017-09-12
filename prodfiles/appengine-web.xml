@@ -33,7 +33,7 @@
     
     <env-variables>
         <env-var name="ENDPOINTS_SERVICE_NAME" value="playerapi.endpoints.leavethehouseoutofit.cloud.goog" />
-        <env-var name="ENDPOINTS_SERVICE_VERSION" value="2017-09-10r0" />
+        <env-var name="ENDPOINTS_SERVICE_VERSION" value="2017-09-12r0" />
     </env-variables>
     
 

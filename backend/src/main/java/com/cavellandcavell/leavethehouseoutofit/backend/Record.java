@@ -99,7 +99,7 @@ public class Record
             log.info("Loaded query for house bets.");
             if (rs.next()) //Anything in the result set?
             {
-                log.info("House bets query was empty.");
+                log.info("House bets query was not empty.");
                 do
                 {
 

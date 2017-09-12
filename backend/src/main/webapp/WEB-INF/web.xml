@@ -11,6 +11,12 @@
         </init-param>
     </servlet>
 
+    <servlet>
+        <servlet-name>CronServlet</servlet-name>
+        <servlet-class>com.cavellandcavell.leavethehouseoutofit.backend.CronServlet</servlet-class>
+    </servlet>
+
+
 
     <!-- Route API method requests to the backend. -->
     <servlet-mapping>

@@ -144,7 +144,7 @@
                       //setup the button for that league
                       display = display + "<button onclick='displayWeek(" + leagues[z].league_Season_ID + ", \"" + response.wshort + "\")'>" + leagues[z].league_Name + "</button>";
 
-                      display = display + "</th><th>" + leagues[z].wins + "</th><th>" + leagues[z].losses + "</th><th>" + leagues[z].pushes + "</th><th>" + leagues[z].winnings + "</th></tr>";
+                      display = display + "</th><th>" + leagues[z].wins + "</th><th>" + leagues[z].losses + "</th><th>" + leagues[z].pushes + "</th><th>" + "$" + parseFloat(Math.round(leagues[z].winnings * 100) / 100).toFixed(2) + "</th></tr>";
                   }
               }
               else

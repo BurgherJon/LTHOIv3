@@ -144,7 +144,7 @@
                       //setup the button for that league
                       display = display + "<button onclick='displayWeek(" + leagues[z].league_Season_ID + ", \"" + response.wshort + "\")'>" + leagues[z].league_Name + "</button>";
 
-                      display = display + "</th><th>" + leagues[z].wins + "</th><th>" + leagues[z].losses + "</th><th>" + leagues[z].pushes + "</th><th>" + parseFloat(Math.round(leagues[z].winnings * 100) / 100).toFixed(2) + "</th></tr>";
+                      display = display + "</th><th>" + leagues[z].wins + "</th><th>" + leagues[z].losses + "</th><th>" + leagues[z].pushes + "</th><th>" + "$" + parseFloat(Math.round(leagues[z].winnings * 100) / 100).toFixed(2) + "</th></tr>";
                   }
               }
               else
@@ -219,6 +219,9 @@
          {
            if (!response.error)
            {
+             var homeborder = "";
+             var awayboarder = "";
+
              //Display the week.
              var display = "<h1 align='center'>" + response.long_Name + "</h1>";
 
@@ -229,7 +232,7 @@
              display += "</p>"
 
              //Add table structure
-             display += '<Table width="100%" border="1">';
+             display += '<Table width="100%" border="0">';
              display += "<tr><th width='10%'></th><th width='25%'>Home Team</th><th width='7%'>Score</th><th width='16%'>Bet and Line</th><th width='7%'>Score</th><th width='25%'>Away Team</th><th width='10%'></th></tr>";
 
              //Loop through the games
@@ -238,23 +241,90 @@
              {
                   display += "<tr>";
 
+                  //Decide where to put the border to emphasize where your bet is.
+                  homeborder = "";
+                  awayborder = "";
+                  if (games[z].user_net_home_bet > 10.0)
+                  {
+                    homeborder = "style='border:5px solid";
+                  }
+                  else if (games[z].user_net_home_bet > 0.0)
+                  {
+                    homeborder = "style='border:1px solid";
+                  }
+                  else if (games[z].user_net_home_bet < -10.0)
+                  {
+                    awayborder = "style='border:5px solid";
+                  }
+                  else if (games[z].user_net_home_bet < 0.0)
+                  {
+                    awayborder = "style='border:1px solid";
+
+                  }
+
+                  //Decide what color to make the border (green for a win, red for a loss, black for push)... but only do it if the game is over (otherwise leave black).
+                  if (games[z].isFinished > 0)
+                  {
+                    //Bet on the home team and won
+                    if ((games[z].user_net_home_bet > 0) && (games[z].home_score > (games[z].away_score + games[z].home_line)))
+                    {
+                        homeborder = homeborder + "#0F0;'";
+                    }
+                    //Bet on the home team and lost
+                    else if ((games[z].user_net_home_bet > 0) && (games[z].home_score < (games[z].away_score + games[z].home_line)))
+                    {
+                        homeborder = homeborder + "#F00;'";
+                    }
+                    //Bet on the way team and won
+                    else if ((games[z].user_net_home_bet < 0) && (games[z].home_score < (games[z].away_score + games[z].home_line)))
+                    {
+                        awayborder = awayborder + "#0F0;'";
+                    }
+                    //Bet on the home team and lost
+                    else if ((games[z].user_net_home_bet < 0) && (games[z].home_score > (games[z].away_score + games[z].home_line)))
+                    {
+                        awayborder = awayborder + "#F00;'";
+                    }
+                  }
+                  else
+                  {
+                    if (homeborder != "")
+                    {
+                      homeborder = homeborder + "#000;'";
+                    }
+                    else if (awayborder != "")
+                    {
+                      awayborder = awayborder + "#000;'";
+                    }
+                  }
+
+
+
+
+
                   //Bet button on home team.
                   display += "<th>";
-                  display += "<button onclick='placeBet(\"" + games[z].home_team + "\")'>+</button>";
-                  display += "<button onclick='deleteBet(\"" + games[z].home_team + "\")'>-</button>";
+                  if (games[z].isLocked = 0)
+                  {
+                    display += "<button onclick='placeBet(\"" + games[z].home_team + "\")'>+</button>";
+                    display += "<button onclick='deleteBet(\"" + games[z].home_team + "\")'>-</button>";
+                  }
                   display += "</th>";
 
                   //Display Game Data
-                  display += "<th>" + games[z].home_team + "</th>";
+                  display += "<th " + homeborder + ">" + games[z].home_team + "</th>";
                   display += "<th>" + games[z].home_score + "</th>";
                   display += "<th>$" + parseFloat(Math.round(games[z].user_net_home_bet * 100) / 100).toFixed(2) + " at " + games[z].home_line + "</th>";
                   display += "<th>" + games[z].away_score + "</th>";
-                  display += "<th>" + games[z].away_team + "</th>";
+                  display += "<th " + awayborder + ">" + games[z].away_team + "</th>";
 
                   //Bet button on away team.
                   display += "<th>";
-                  display += "<button onclick='placeBet(\"" + games[z].away_team + "\")'>+</button>";
-                  display += "<button onclick='deleteBet(\"" + games[z].away_team + "\")'>-</button>";
+                  if (games[z].isLocked = 0)
+                  {
+                    display += "<button onclick='placeBet(\"" + games[z].away_team + "\")'>+</button>";
+                    display += "<button onclick='deleteBet(\"" + games[z].away_team + "\")'>-</button>";
+                  }
                   display += "</th>";
 
                   display += "</tr>"

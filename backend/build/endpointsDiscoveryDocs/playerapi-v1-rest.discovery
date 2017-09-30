@@ -9,7 +9,7 @@
   }
  },
  "basePath": "/_ah/api/playerapi/v1/",
- "baseUrl": "https://leavethehouseoutofit.appspot.com/_ah/api/playerapi/v1/",
+ "baseUrl": "https://lthoi-test.appspot.com/_ah/api/playerapi/v1/",
  "batchPath": "batch",
  "description": "This is an API",
  "discoveryVersion": "v1",
@@ -322,7 +322,7 @@
   }
  },
  "protocol": "rest",
- "rootUrl": "https://leavethehouseoutofit.appspot.com/_ah/api/",
+ "rootUrl": "https://lthoi-test.appspot.com/_ah/api/",
  "schemas": {
   "Bet": {
    "id": "Bet",
@@ -608,9 +608,15 @@
     "long_Name": {
      "type": "string"
     },
+    "next": {
+     "type": "string"
+    },
     "number": {
      "format": "int32",
      "type": "integer"
+    },
+    "previous": {
+     "type": "string"
     },
     "season": {
      "format": "int32",

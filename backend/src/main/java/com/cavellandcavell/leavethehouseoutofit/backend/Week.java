@@ -18,6 +18,8 @@ public class Week
     private int season;
     private String short_name;
     private String long_name;
+    private String next;
+    private String previous;
 
     private ArrayList<Game> games = new ArrayList<>();
     private Date start;
@@ -32,6 +34,8 @@ public class Week
     public Week(int id, int lsid, int uid, Connection conn)
     {
         String strquery;
+        int nextID;
+        int prevID;
         final Logger log = Logger.getLogger(League_Season.class.getName());
 
         log.info("In the constructor for Week with the id passed.");
@@ -47,6 +51,8 @@ public class Week
                 this.setShort_Name(rs.getString("name_short"));
                 this.setNumber(rs.getInt("number"));
                 this.setSeason(rs.getInt("season"));
+                nextID = rs.getInt("id") + 1;
+                prevID = rs.getInt("id") - 1;
             }
             else //Nothing in the result set.
             {
@@ -54,6 +60,22 @@ public class Week
                 log.severe("Query Executed: " + strquery);
                 return;
             }
+
+            strquery = "Select name_long FROM weeks WHERE id = '" + nextID + "';";
+            rs = conn.createStatement().executeQuery(strquery);
+            if (rs.next()) //Anything in the result set?
+            {
+                this.setNext(rs.getString("name_long"));
+            }
+            else {} //Nothing in the result set.  In which case we don't want to set a value so that the UI can assume there is no next week.
+
+            strquery = "Select name_long FROM weeks WHERE id = '" + prevID + "';";
+            rs = conn.createStatement().executeQuery(strquery);
+            if (rs.next()) //Anything in the result set?
+            {
+                this.setPrevious(rs.getString("name_long"));
+            }
+            else {} //Nothing in the result set.  In which case we don't want to set a value so that the UI can assume there is no next week.
 
             strquery = "Select game_id FROM games WHERE week_id = " + id + ";";
             rs = conn.createStatement().executeQuery(strquery);
@@ -69,6 +91,8 @@ public class Week
             {
                 log.severe("No Games in the Week.");
             }
+
+
         }
         catch (SQLException e)
         {
@@ -77,9 +101,24 @@ public class Week
         }
     }
 
-    public int getNumber()
+    public String getPrevious()
     {
-        return number;
+        return previous;
+    }
+
+    public void setPrevious(String update)
+    {
+        previous = update;
+    }
+
+    public String getNext()
+    {
+        return next;
+    }
+
+    public void setNext(String update)
+    {
+        next = update;
     }
 
     public void setNumber(int update)

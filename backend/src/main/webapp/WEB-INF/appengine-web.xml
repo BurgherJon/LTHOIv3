@@ -23,17 +23,9 @@
 
     <env-variables>
         <env-var name="ENDPOINTS_SERVICE_NAME" value="playerapi.endpoints.lthoi-test.cloud.goog" />
-        <env-var name="ENDPOINTS_SERVICE_VERSION" value="2017-09-10r1" />
+        <env-var name="ENDPOINTS_SERVICE_VERSION" value="2017-09-29r0" />
     </env-variables>
 
-
-
-    <!--
-    <env-variables>
-        <env-var name="ENDPOINTS_SERVICE_NAME" value="playerapi.endpoints.leavethehouseoutofit.cloud.goog" />
-        <env-var name="ENDPOINTS_SERVICE_VERSION" value="2017-08-28r0" />
-    </env-variables>
-    -->
 
 
     <use-google-connector-j>true</use-google-connector-j>

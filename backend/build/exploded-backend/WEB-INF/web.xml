@@ -11,6 +11,12 @@
         </init-param>
     </servlet>
 
+    <servlet>
+        <servlet-name>CronServlet</servlet-name>
+        <servlet-class>com.cavellandcavell.leavethehouseoutofit.backend.CronServlet</servlet-class>
+    </servlet>
+
+
 
     <!-- Route API method requests to the backend. -->
     <servlet-mapping>
@@ -18,13 +24,16 @@
         <url-pattern>/_ah/api/*</url-pattern>
     </servlet-mapping>
 
+    <!-- Catch the cron servlet. -->
+    <servlet-mapping>
+        <servlet-name>CronServlet</servlet-name>
+        <url-pattern>/cron</url-pattern>
+    </servlet-mapping>
 
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
-
-    <!-- One set of filters for test, one for production !-->
 
     <filter>
         <filter-name>endpoints-api-configuration</filter-name>
@@ -52,6 +61,7 @@
     </filter-mapping>
 
 
+    <!-- One set of filters for test, one for production !-->
     <!--
     <filter>
         <filter-name>endpoints-api-configuration</filter-name>

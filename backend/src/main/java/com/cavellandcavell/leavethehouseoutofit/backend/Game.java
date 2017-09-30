@@ -49,6 +49,7 @@ public class Game
         int timetoremove = 0;
         double bet_amount = 0;
         double house_amount = 1;
+        double line = 0.0;
         final Logger log = Logger.getLogger(Game.class.getName());
 
         log.info("Constructing Game Entity.");
@@ -69,7 +70,6 @@ public class Game
                 this.home_team = rs.getString("home_name");
                 this.away_city = rs.getString("away_city");
                 this.away_team = rs.getString("away_name");
-                this.home_line = rs.getDouble("home_line");
                 this.mins_remaining = rs.getInt("mins_remaining");
                 this.secs_remaining = rs.getInt("secs_remaining");
                 this.home_score = rs.getInt("home_score");
@@ -87,6 +87,18 @@ public class Game
                 {
                     this.isLocked = 1;
                 }
+
+                line = rs.getDouble("home_line");
+                if (rs.wasNull())
+                {
+                    this.isLocked = 1;
+                    this.home_line = -999;
+                }
+                else
+                {
+                    this.home_line = line;
+                }
+
 
             }
             else //Nothing in the result set.

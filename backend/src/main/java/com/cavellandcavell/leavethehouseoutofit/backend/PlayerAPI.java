@@ -531,6 +531,12 @@ public class PlayerAPI {
                 log.info("Query Executed: " + strquery);
             }
 
+
+
+
+
+
+
             conn.close();
         }
         catch (SQLException e)

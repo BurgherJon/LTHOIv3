@@ -527,8 +527,8 @@ public class PlayerAPI {
             }
             else //Nothing in the result set.
             {
-                log.severe("No house bets necessary.");
-                log.severe("Query Executed: " + strquery);
+                log.info("No house bets necessary.");
+                log.info("Query Executed: " + strquery);
             }
 
             conn.close();

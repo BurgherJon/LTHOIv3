@@ -266,22 +266,22 @@
                   if (games[z].isFinished > 0)
                   {
                     //Bet on the home team and won
-                    if ((games[z].user_net_home_bet > 0) && (games[z].home_score > (games[z].away_score + games[z].home_line)))
+                    if ((games[z].user_net_home_bet > 0) && (games[z].home_score > (games[z].away_score - games[z].home_line)))
                     {
                         homeborder = homeborder + "#0F0;'";
                     }
                     //Bet on the home team and lost
-                    else if ((games[z].user_net_home_bet > 0) && (games[z].home_score < (games[z].away_score + games[z].home_line)))
+                    else if ((games[z].user_net_home_bet > 0) && (games[z].home_score < (games[z].away_score - games[z].home_line)))
                     {
                         homeborder = homeborder + "#F00;'";
                     }
                     //Bet on the way team and won
-                    else if ((games[z].user_net_home_bet < 0) && (games[z].home_score < (games[z].away_score + games[z].home_line)))
+                    else if ((games[z].user_net_home_bet < 0) && (games[z].home_score < (games[z].away_score - games[z].home_line)))
                     {
                         awayborder = awayborder + "#0F0;'";
                     }
                     //Bet on the home team and lost
-                    else if ((games[z].user_net_home_bet < 0) && (games[z].home_score > (games[z].away_score + games[z].home_line)))
+                    else if ((games[z].user_net_home_bet < 0) && (games[z].home_score > (games[z].away_score - games[z].home_line)))
                     {
                         awayborder = awayborder + "#F00;'";
                     }

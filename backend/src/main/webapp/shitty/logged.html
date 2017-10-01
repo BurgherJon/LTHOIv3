@@ -304,7 +304,7 @@
 
                   //Bet button on home team.
                   display += "<th>";
-                  if (games[z].isLocked = 0)
+                  if (games[z].isLocked == 0)
                   {
                     display += "<button onclick='placeBet(\"" + games[z].home_team + "\")'>+</button>";
                     display += "<button onclick='deleteBet(\"" + games[z].home_team + "\")'>-</button>";
@@ -331,7 +331,7 @@
 
                   //Bet button on away team.
                   display += "<th>";
-                  if (games[z].isLocked = 0)
+                  if (games[z].isLocked == 0)
                   {
                     display += "<button onclick='placeBet(\"" + games[z].away_team + "\")'>+</button>";
                     display += "<button onclick='deleteBet(\"" + games[z].away_team + "\")'>-</button>";

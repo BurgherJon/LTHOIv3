@@ -79,6 +79,7 @@
     var lsid = 0; //The League season that is currently logged in.
     var week = "error";  //The short-name of the week that is being looked at.
     var fid = "error";  //The firebase id of the current user.
+    var email = "error"; //The email of the current user.
 
 
 
@@ -126,6 +127,9 @@
             {
               //Put the username in the corner.
               userinfo.innerHTML = "Hello " + response.fname;
+
+              //Store the user's email address
+              email = response.email;
 
               //Setup League Options
               var display = 'Choose the league you want to work with:<br>';
@@ -221,6 +225,12 @@
            {
              var homeborder = "";
              var awayboarder = "";
+             var homebets = 0;
+             var awaybets = 0;
+             var homenet = "";
+             var awaynet = "";
+             var background = "";
+             var counter = 0;
 
              //Display the week.
              var display = "<h1 align='center'>" + response.long_Name + "</h1>";
@@ -233,55 +243,65 @@
 
              //Add table structure
              display += '<Table width="100%" border="0">';
-             display += "<tr><th width='10%'></th><th width='25%'>Home Team</th><th width='7%'>Score</th><th width='16%'>Bet and Line</th><th width='7%'>Score</th><th width='25%'>Away Team</th><th width='10%'></th></tr>";
+             display += "<tr><th width='10%'>Bets</th><th width='25%'>Home Team</th><th width='7%'>Score</th><th width='16%'>Line</th><th width='7%'>Score</th><th width='25%'>Away Team</th><th width='10%'>Bets</th></tr>";
 
              //Loop through the games
              var games = response.games || [];
              for (z=0;z<games.length;z++)
              {
-                  display += "<tr>";
+                  //Decide if it's an even row for shading.
+                  background = "";
+                  if ((z%2) == 0)
+                  {
+                    background = " background-color:#f2f2f2;";
+                  }
 
-                  //Decide where to put the border to emphasize where your bet is.
+                  //Decide where to put the border to emphasize where your bet is and what to display under each team.
                   homeborder = "";
                   awayborder = "";
+                  homenet = "";
+                  awaynet = "";
                   if (games[z].user_net_home_bet > 10.0)
                   {
                     homeborder = "style='border:5px solid";
+                    homenet = "<br>$" + + parseFloat(Math.round(games[z].user_net_home_bet * 100) / 100).toFixed(2);
                   }
                   else if (games[z].user_net_home_bet > 0.0)
                   {
-                    homeborder = "style='border:1px solid";
+                    homeborder = "style='border:2px solid";
+                    homenet = "<br>$" + + parseFloat(Math.round(games[z].user_net_home_bet * 100) / 100).toFixed(2);
                   }
                   else if (games[z].user_net_home_bet < -10.0)
                   {
                     awayborder = "style='border:5px solid";
+                    awaynet = "<br>$" + + parseFloat(Math.round(games[z].user_net_home_bet * -100) / 100).toFixed(2);
                   }
                   else if (games[z].user_net_home_bet < 0.0)
                   {
-                    awayborder = "style='border:1px solid";
-
+                    awayborder = "style='border:2px solid";
+                    awaynet = "<br>$" + + parseFloat(Math.round(games[z].user_net_home_bet * -100) / 100).toFixed(2)
                   }
 
                   //Decide what color to make the border (green for a win, red for a loss, black for push)... but only do it if the game is over (otherwise leave black).
                   if (games[z].isFinished > 0)
                   {
                     //Bet on the home team and won
-                    if ((games[z].user_net_home_bet > 0) && (games[z].home_score > (games[z].away_score + games[z].home_line)))
+                    if ((games[z].user_net_home_bet > 0) && (games[z].home_score > (games[z].away_score - games[z].home_line)))
                     {
                         homeborder = homeborder + "#0F0;'";
                     }
                     //Bet on the home team and lost
-                    else if ((games[z].user_net_home_bet > 0) && (games[z].home_score < (games[z].away_score + games[z].home_line)))
+                    else if ((games[z].user_net_home_bet > 0) && (games[z].home_score < (games[z].away_score - games[z].home_line)))
                     {
                         homeborder = homeborder + "#F00;'";
                     }
                     //Bet on the way team and won
-                    else if ((games[z].user_net_home_bet < 0) && (games[z].home_score < (games[z].away_score + games[z].home_line)))
+                    else if ((games[z].user_net_home_bet < 0) && (games[z].home_score < (games[z].away_score - games[z].home_line)))
                     {
                         awayborder = awayborder + "#0F0;'";
                     }
                     //Bet on the home team and lost
-                    else if ((games[z].user_net_home_bet < 0) && (games[z].home_score > (games[z].away_score + games[z].home_line)))
+                    else if ((games[z].user_net_home_bet < 0) && (games[z].home_score > (games[z].away_score - games[z].home_line)))
                     {
                         awayborder = awayborder + "#F00;'";
                     }
@@ -298,21 +318,54 @@
                     }
                   }
 
+                  //Figure out how many bets the user has on the hometeam.
+                  homebets = 0;
+                  awaybets = 0;
+                  if (!(games[z].home_bets === undefined))
+                  {
+                    for(counter=0;counter<games[z].home_bets.length;counter++)
+                    {
+                        if (games[z].home_bets[counter].email == email)
+                        {
+                            homebets++;
+                        }
+                    }
+                  }
+                  if (!(games[z].away_bets === undefined))
+                  {
+                    for(counter=0;counter<games[z].away_bets.length;counter++)
+                    {
+                        if (games[z].away_bets[counter].email == email)
+                        {
+                            awaybets++;
+                        }
+                    }
+                  }
 
+
+
+                  //Create the row and set the bgcolor
+                  display += "<tr style='height:3em;" + background + "'>";
 
 
 
                   //Bet button on home team.
                   display += "<th>";
-                  if (games[z].isLocked = 0)
+                  if (games[z].isLocked == 0)
                   {
-                    display += "<button onclick='placeBet(\"" + games[z].home_team + "\")'>+</button>";
-                    display += "<button onclick='deleteBet(\"" + games[z].home_team + "\")'>-</button>";
+                    display += "<button style='font-size:20px; padding:2px 5px' onclick='placeBet(\"" + games[z].home_team + "\")'>+</button>";
+                  }
+
+                  display += " " + homebets + " ";
+
+                  if (games[z].isLocked == 0)
+                  {
+                    display += "<button style='font-size:20px; padding:2px 7px' onclick='deleteBet(\"" + games[z].home_team + "\")'>-</button>";
                   }
                   display += "</th>";
 
                   //Display Home Game Data
-                  display += "<th " + homeborder + ">" + games[z].home_team + "</th>";
+                  display += "<th " + homeborder + ">" + games[z].home_team + homenet + "</th>";
                   display += "<th>" + games[z].home_score + "</th>";
 
                   //If the line hasn't been defined then there will not be any bets or line, so we can skip displying the middle row.  The game will have already been marked frozen as that is default behavior.
@@ -322,19 +375,25 @@
                   }
                   else
                   {
-                    display += "<th>$" + parseFloat(Math.round(games[z].user_net_home_bet * 100) / 100).toFixed(2) + " at " + games[z].home_line + "</th>";
+                    display += "<th>" + games[z].home_line + "</th>";
                   }
 
                   //Display the Away Game Data
                   display += "<th>" + games[z].away_score + "</th>";
-                  display += "<th " + awayborder + ">" + games[z].away_team + "</th>";
+                  display += "<th " + awayborder + ">" + games[z].away_team + awaynet + "</th>";
 
                   //Bet button on away team.
                   display += "<th>";
-                  if (games[z].isLocked = 0)
+                  if (games[z].isLocked == 0)
                   {
-                    display += "<button onclick='placeBet(\"" + games[z].away_team + "\")'>+</button>";
-                    display += "<button onclick='deleteBet(\"" + games[z].away_team + "\")'>-</button>";
+                    display += "<button style='font-size:20px; padding:2px 5px' onclick='placeBet(\"" + games[z].away_team + "\")'>+</button>";
+                  }
+
+                  display += " " + awaybets + " ";
+
+                  if (games[z].isLocked == 0)
+                  {
+                    display += "<button style='font-size:20px; padding:2px 6px' onclick='deleteBet(\"" + games[z].away_team + "\")'>-</button>";
                   }
                   display += "</th>";
 

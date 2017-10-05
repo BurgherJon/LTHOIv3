@@ -238,12 +238,13 @@
              //Display buttons for next or previous week.
              display += "<p align='center'>"
              display += "<button align='center' onclick='displayWeek(" + lsid + ", \"" + response.previous + "\")'>" + "Previous Week" + "</button>"
+             display += "<button align='center' onclick='displayWeek(" + lsid + ", \"" + week + "\")'>" + "Refresh" + "</button>"
              display += "<button align='center' onclick='displayWeek(" + lsid + ", \"" + response.next + "\")'>" + "Next Week" + "</button>"
              display += "</p>"
 
              //Add table structure
              display += '<Table width="100%" border="0">';
-             display += "<tr><th width='10%'>Bets</th><th width='25%'>Home Team</th><th width='7%'>Score</th><th width='16%'>Line</th><th width='7%'>Score</th><th width='25%'>Away Team</th><th width='10%'>Bets</th></tr>";
+             display += "<tr><th width='15%'>Bets</th><th width='20%'>Home Team</th><th width='7%'>Score</th><th width='16%'>Line</th><th width='7%'>Score</th><th width='20%'>Away Team</th><th width='15%'>Bets</th></tr>";
 
              //Loop through the games
              var games = response.games || [];
@@ -283,7 +284,7 @@
                   }
 
                   //Decide what color to make the border (green for a win, red for a loss, black for push)... but only do it if the game is over (otherwise leave black).
-                  if (games[z].isFinished > 0)
+                  if (games[z].isFinished > 0 || games[z].mins_remaining == 1)
                   {
                     //Bet on the home team and won
                     if ((games[z].user_net_home_bet > 0) && (games[z].home_score > (games[z].away_score - games[z].home_line)))
@@ -305,6 +306,18 @@
                     {
                         awayborder = awayborder + "#F00;'";
                     }
+                    //Push
+                    else
+                    {
+                        if (homeborder != "")
+                        {
+                            homeborder = homeborder + "#000;'";
+                        }
+                        else if (awayborder != "")
+                        {
+                            awayborder = awayborder + "#000;'";
+                        }
+                    }
                   }
                   else
                   {
@@ -315,6 +328,20 @@
                     else if (awayborder != "")
                     {
                       awayborder = awayborder + "#000;'";
+                    }
+                  }
+
+                  //Decide whether to highlight the game as in progress.
+                  if (games[z].mins_remaining == 1)
+                  {
+                    //check if we've already shaded the background and if so make it a dark yellow, else set it to a lighter yellow.
+                    if (background != "")
+                    {
+                        background = " background-color:#DAA520;";
+                    }
+                    else
+                    {
+                        background = " background-color:#FFD700;";
                     }
                   }
 

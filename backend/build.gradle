@@ -47,6 +47,9 @@ appengine {
 }
 
 dependencies {
+    //JSON
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+
     // Apengine Stuff
     compile group: 'com.google.appengine', name: 'appengine-tools-sdk', version: '1.9.54'
 

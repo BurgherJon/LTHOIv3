@@ -22,6 +22,8 @@ import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.config.Nullable;
 import com.google.api.server.spi.response.CollectionResponse;
 import com.google.appengine.api.utils.SystemProperty;
+
+import java.util.Calendar;
 import java.util.logging.Logger;
 import com.google.api.server.spi.response.InternalServerErrorException;
 import com.google.api.server.spi.response.UnauthorizedException;
@@ -33,7 +35,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+//import javax.xml.bind.DatatypeConverter;
+import org.apache.commons.codec.binary.Base64;
+
 import javax.inject.Named;
+
+import java.io.FileReader;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.ParseException;
+import org.json.simple.parser.JSONParser;
+import java.util.Date;
 
 
 import javax.inject.Named;
@@ -529,6 +549,113 @@ public class PlayerAPI {
             {
                 log.info("No house bets necessary.");
                 log.info("Query Executed: " + strquery);
+            }
+
+
+            //Ping the service about scores.
+            try
+            {
+                //Figure out the current date in the right format.
+                int year = Calendar.getInstance().get(Calendar.YEAR);
+                int monthint = Calendar.getInstance().get(Calendar.MONTH) + 1;
+                String month = "" + monthint;
+                if (monthint < 10)
+                {
+                    month = "0" + monthint;
+                }
+                int todayint = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+                String day;
+                int dayint;
+
+
+
+                for (int counter=-1;counter < 2; counter++)
+                {
+                    //Each time we run, we run for yesterday, today, and tomorrow... just to cover all the bets possibly spilling over.
+                    dayint = todayint + counter;
+                    day = "" + dayint;
+                    if (dayint < 10)
+                    {
+                        day = "0" + day;
+                    }
+                    log.info("Running for: " + year + month + day);
+
+
+                    //Setup the URL Fetch
+                    try
+                    {
+                        URL url = new URL("https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/scoreboard.json?fordate=" + year + month + day + "&force=false");
+                        String encoding = new String(Base64.encodeBase64("BurgherJon:VegasVaca".getBytes()));
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setRequestMethod("GET");
+                        connection.setDoOutput(true);
+                        connection.setRequestProperty("Authorization", "Basic " + encoding);
+                        InputStream content = (InputStream) connection.getInputStream();
+                        BufferedReader in =
+                                new BufferedReader(new InputStreamReader(content));
+                        String line;
+
+
+                        //Setup to parse the data.
+                        Object obj = new JSONParser().parse(in);
+                        JSONObject job = (JSONObject) obj;
+                        JSONObject scoreboard = (JSONObject) job.get("scoreboard");
+                        JSONArray gamescores = (JSONArray) scoreboard.get("gameScore");
+                        JSONObject gamescore;
+                        JSONObject hometeam;
+                        JSONObject game;
+                        int minutes_remaining;
+                        int isFinished;
+                        int home_id;
+                        for (int index = 0; index < gamescores.size(); index++) {
+                            gamescore = (JSONObject) gamescores.get(index);
+                            game = (JSONObject) gamescore.get("game");
+
+                            //check if the game is in progress and, if it is, stipulate that the minutes remaining in the game will be set to 1.
+                            if (gamescore.get("isInProgress").equals("true")) {
+                                minutes_remaining = 1;
+                            } else {
+                                minutes_remaining = 0;
+                            }
+
+                            //check if the game has ended and, if it has, stipulate that the isFinished will be 1.
+                            if (gamescore.get("isCompleted").equals("true")) {
+                                isFinished = 1;
+                            } else {
+                                isFinished = 0;
+                            }
+
+                            //Retrieve my id value for the home team (as a way to verify that the games haven't gotten messed up on their system.
+                            hometeam = (JSONObject) game.get("homeTeam");
+                            strquery = "SELECT team_id FROM teams WHERE msf_id = " + hometeam.get("ID") + ";";
+                            rs = conn.createStatement().executeQuery(strquery);
+                            if (rs.next()) {
+                                home_id = rs.getInt("team_id");
+                            } else {
+                                log.severe("Something isn't right... the homeTeam in a retreived score is not found!!!");
+                                throw new Exception("Error trying to update scores!");
+                            }
+
+
+                            //Query for updating the score in the system.
+                            strquery = "UPDATE games SET home_score = " + gamescore.get("homeScore") + ", away_score = " + gamescore.get("awayScore") + ", isFinished = " + isFinished + ", mins_remaining = " + minutes_remaining + " WHERE (msf_id = " + game.get("ID") + " AND home_team = " + home_id + ");";
+                            log.info("Updating a score: " + strquery);
+                            conn.createStatement().executeUpdate(strquery);
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        log.info("Exception with the call, was probably just a lack of an update.  Continuing in case the next one works.");
+                        log.info(e.getMessage());
+                    }
+                }
+
+
+
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
             }
 
 

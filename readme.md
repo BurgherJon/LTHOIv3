@@ -57,7 +57,7 @@ Prod Pipeline:
 
 ## API Reference
 
-https://github.com/BurgherJon/LTHOIv3/tree/master/backend/build/endpointsDiscoveryDocs
+https://lthoi-test.appspot.com/_ah/api/discovery/v1/apis/playerapi/v1/rest?fields=kind%2Cname%2Cversion%2CrootUrl%2CservicePath%2Cresources%2Cparameters%2Cmethods%2CbatchPath%2Cid&pp=0&key=AIzaSyDT-hXFhfRcHvmiFqEzTxaLQh2u0FY62Gc
 Also useful is the test API Console: https://apis-explorer.appspot.com/apis-explorer/?base=https://lthoi-test.appspot.com/_ah/api#p/playerapi/v1/ (you can get the firebase UID from the database to execute as any user).
 
 ## Tests

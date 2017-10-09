@@ -9,3 +9,5 @@
 .externalNativeBuild
 
 local.properties
+backend/build/
+.idea/

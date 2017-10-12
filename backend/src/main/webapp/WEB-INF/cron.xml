@@ -3,6 +3,6 @@
     <cron>
         <url>/cron</url>
         <description>Update the house bets and game scores if necessary.</description>
-        <schedule>every 1 minutes</schedule>
+        <schedule>every 30 minutes</schedule>
     </cron>
 </cronentries>

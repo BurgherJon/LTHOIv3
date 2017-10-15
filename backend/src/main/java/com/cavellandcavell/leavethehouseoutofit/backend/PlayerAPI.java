@@ -584,7 +584,7 @@ public class PlayerAPI {
                     //Setup the URL Fetch
                     try
                     {
-                        URL url = new URL("https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/scoreboard.json?fordate=" + year + month + day + "&force=false");
+                        URL url = new URL("https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/scoreboard.json?fordate=" + year + month + day /* + "&force=false" */);
                         String encoding = new String(Base64.encodeBase64("BurgherJon:VegasVaca".getBytes()));
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                         connection.setRequestMethod("GET");
@@ -604,6 +604,12 @@ public class PlayerAPI {
                         JSONObject gamescore;
                         JSONObject hometeam;
                         JSONObject game;
+                        String isInProgress;
+                        String isCompleted;
+                        String homeScore;
+                        String awayScore;
+                        String msf_id;
+                        String homemsfID;
                         int minutes_remaining;
                         int isFinished;
                         int home_id;
@@ -611,23 +617,33 @@ public class PlayerAPI {
                             gamescore = (JSONObject) gamescores.get(index);
                             game = (JSONObject) gamescore.get("game");
 
+                            isInProgress = (String)gamescore.get("isInProgress");
+                            isCompleted = (String)gamescore.get("isCompleted");
+                            homeScore = (String)gamescore.get("homeScore");
+                            awayScore = (String)gamescore.get("awayScore");
+                            hometeam = (JSONObject) game.get("homeTeam");
+                            homemsfID = (String)hometeam.get("ID");
+
+                            log.info("isInProgress = " + isInProgress + " ||| isCompleted = " + isCompleted + " ||| homeScore = " + homeScore + " ||| awayScore = " + awayScore + " ||| homemsfID = " + homemsfID);
+
+
                             //check if the game is in progress and, if it is, stipulate that the minutes remaining in the game will be set to 1.
-                            if (((String)gamescore.get("isInProgress")).equals("true") || ((((String)gamescore.get("isCompleted")).equals("true")) && (((int)(gamescore.get("homescore")) > 0) || ((int)(gamescore.get("awayScore")) > 0)))) {
+                            if (isInProgress.equals("true") || ((isCompleted.equals("true")) && ((homeScore.equals("0")) || (awayScore.equals("0"))))) {
                                 minutes_remaining = 1;
                             } else {
                                 minutes_remaining = 0;
                             }
 
                             //check if the game has ended and, if it has, stipulate that the isFinished will be 1.
-                            if (((String)gamescore.get("isCompleted")).equals("true")) {
+                            if (isCompleted.equals("true")) {
                                 isFinished = 1;
                             } else {
                                 isFinished = 0;
                             }
 
                             //Retrieve my id value for the home team (as a way to verify that the games haven't gotten messed up on their system.
-                            hometeam = (JSONObject) game.get("homeTeam");
-                            strquery = "SELECT team_id FROM teams WHERE msf_id = " + hometeam.get("ID") + ";";
+
+                            strquery = "SELECT team_id FROM teams WHERE msf_id = " + homemsfID + ";";
                             rs = conn.createStatement().executeQuery(strquery);
                             if (rs.next()) {
                                 home_id = rs.getInt("team_id");
@@ -638,7 +654,7 @@ public class PlayerAPI {
 
 
                             //Query for updating the score in the system.
-                            strquery = "UPDATE games SET home_score = " + gamescore.get("homeScore") + ", away_score = " + gamescore.get("awayScore") + ", isFinished = " + isFinished + ", mins_remaining = " + minutes_remaining + " WHERE (msf_id = " + game.get("ID") + " AND home_team = " + home_id + ");";
+                            strquery = "UPDATE games SET home_score = " + homeScore + ", away_score = " + awayScore + ", isFinished = " + isFinished + ", mins_remaining = " + minutes_remaining + " WHERE (msf_id = " + game.get("ID") + " AND home_team = " + home_id + ");";
                             log.info("Updating a score: " + strquery);
                             conn.createStatement().executeUpdate(strquery);
                         }

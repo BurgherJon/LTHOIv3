@@ -628,7 +628,7 @@ public class PlayerAPI {
 
 
                             //check if the game is in progress and, if it is, stipulate that the minutes remaining in the game will be set to 1.
-                            if (isInProgress.equals("true") || ((!(homeScore.equals("0"))) || (!(awayScore.equals("0"))))) {
+                            if (isInProgress.equals("true") || ((!isCompleted.equals("true")) && ((!(homeScore.equals("0"))) || (!(awayScore.equals("0")))))) {
                                 minutes_remaining = 1;
                             } else {
                                 minutes_remaining = 0;

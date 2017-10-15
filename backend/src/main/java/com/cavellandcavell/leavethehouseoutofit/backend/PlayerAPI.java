@@ -612,14 +612,14 @@ public class PlayerAPI {
                             game = (JSONObject) gamescore.get("game");
 
                             //check if the game is in progress and, if it is, stipulate that the minutes remaining in the game will be set to 1.
-                            if (gamescore.get("isInProgress").equals("true") || ((gamescore.get("isCompleted").equals("true")) && (((int)(gamescore.get("homescore")) > 0) || ((int)(gamescore.get("awayScore")) > 0)))) {
+                            if (((String)gamescore.get("isInProgress")).equals("true") || ((((String)gamescore.get("isCompleted")).equals("true")) && (((int)(gamescore.get("homescore")) > 0) || ((int)(gamescore.get("awayScore")) > 0)))) {
                                 minutes_remaining = 1;
                             } else {
                                 minutes_remaining = 0;
                             }
 
                             //check if the game has ended and, if it has, stipulate that the isFinished will be 1.
-                            if (gamescore.get("isCompleted").equals("true")) {
+                            if (((String)gamescore.get("isCompleted")).equals("true")) {
                                 isFinished = 1;
                             } else {
                                 isFinished = 0;

@@ -602,17 +602,20 @@ public class PlayerAPI {
                         JSONObject scoreboard = (JSONObject) job.get("scoreboard");
                         JSONArray gamescores = (JSONArray) scoreboard.get("gameScore");
                         JSONObject gamescore;
-                        JSONObject hometeam;
+                        JSONObject team;
                         JSONObject game;
                         String isInProgress;
                         String isCompleted;
                         String homeScore;
                         String awayScore;
-                        String msf_id;
-                        String homemsfID;
+                        String homeTeamName;
+                        String awayTeamName;
+                        int homeTeamNum;
+                        int awayTeamNum;
+
                         int minutes_remaining;
                         int isFinished;
-                        int home_id;
+                        int weekNum;
                         for (int index = 0; index < gamescores.size(); index++) {
                             gamescore = (JSONObject) gamescores.get(index);
                             game = (JSONObject) gamescore.get("game");
@@ -621,10 +624,12 @@ public class PlayerAPI {
                             isCompleted = (String)gamescore.get("isCompleted");
                             homeScore = (String)gamescore.get("homeScore");
                             awayScore = (String)gamescore.get("awayScore");
-                            hometeam = (JSONObject) game.get("homeTeam");
-                            homemsfID = (String)hometeam.get("ID");
+                            team = (JSONObject) game.get("homeTeam");
+                            homeTeamName = (String)team.get("Name");
+                            team = (JSONObject) game.get("awayTeam");
+                            awayTeamName = (String)team.get("Name");
 
-                            log.info("isInProgress = " + isInProgress + " ||| isCompleted = " + isCompleted + " ||| homeScore = " + homeScore + " ||| awayScore = " + awayScore + " ||| homemsfID = " + homemsfID);
+                            log.info("isInProgress = " + isInProgress + " ||| isCompleted = " + isCompleted + " ||| homeScore = " + homeScore + " ||| awayScore = " + awayScore + " ||| homeTeamName = " + homeTeamName + " ||| awayTeamName = " + awayTeamName);
 
 
                             //check if the game is in progress and, if it is, stipulate that the minutes remaining in the game will be set to 1.
@@ -641,20 +646,44 @@ public class PlayerAPI {
                                 isFinished = 0;
                             }
 
-                            //Retrieve my id value for the home team (as a way to verify that the games haven't gotten messed up on their system.
-
-                            strquery = "SELECT team_id FROM teams WHERE msf_id = " + homemsfID + ";";
+                            //Retrieve the current week, should only be updating the current week.
+                            strquery = "SELECT CurrentWeek FROM sysinfo;";
                             rs = conn.createStatement().executeQuery(strquery);
                             if (rs.next()) {
-                                home_id = rs.getInt("team_id");
+                                weekNum = rs.getInt("CurrentWeek");
                             } else {
-                                log.severe("Something isn't right... the homeTeam in a retreived score is not found!!!");
-                                throw new Exception("Error trying to update scores!");
+                                log.severe("Failed to retrieve a week number from current week.");
+                                throw new Exception("No week, something's wrong!");
+                            }
+
+                            //Retreive the home team's ID in my database.
+                            strquery = "SELECT team_id FROM teams WHERE name = '" + homeTeamName + "';";
+                            rs = conn.createStatement().executeQuery(strquery);
+                            if (rs.next())
+                            {
+                                homeTeamNum = rs.getInt("team_id");
+                            }
+                            else
+                            {
+                                log.severe("Unable to find the the home team!!!");
+                                throw new Exception("No Home Team!!!");
+                            }
+
+                            strquery = "SELECT team_id FROM teams WHERE name = '" + awayTeamName + "';";
+                            rs = conn.createStatement().executeQuery(strquery);
+                            if (rs.next())
+                            {
+                                awayTeamNum = rs.getInt("team_id");
+                            }
+                            else
+                            {
+                                log.severe("Unable to find the the home team!!!");
+                                throw new Exception("No Away Team!!!");
                             }
 
 
                             //Query for updating the score in the system.
-                            strquery = "UPDATE games SET home_score = " + homeScore + ", away_score = " + awayScore + ", isFinished = " + isFinished + ", mins_remaining = " + minutes_remaining + " WHERE (msf_id = " + game.get("ID") + " AND home_team = " + home_id + ");";
+                            strquery = "UPDATE games SET home_score = " + homeScore + ", away_score = " + awayScore + ", isFinished = " + isFinished + ", mins_remaining = " + minutes_remaining + " WHERE (week_id = " + weekNum + " AND home_team = " + homeTeamNum + " AND away_team = " + awayTeamNum + ");";
                             log.info("Updating a score: " + strquery);
                             conn.createStatement().executeUpdate(strquery);
                         }

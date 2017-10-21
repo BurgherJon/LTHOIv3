@@ -623,13 +623,23 @@ public class PlayerAPI {
                             isInProgress = (String)gamescore.get("isInProgress");
                             isCompleted = (String)gamescore.get("isCompleted");
                             homeScore = (String)gamescore.get("homeScore");
+                            if(homeScore.isEmpty())
+                            {
+                                homeScore = "0";
+                            }
                             awayScore = (String)gamescore.get("awayScore");
+                            if(awayScore.isEmpty())
+                            {
+                                awayScore = "0";
+                            }
                             team = (JSONObject) game.get("homeTeam");
                             homeTeamName = (String)team.get("Name");
                             team = (JSONObject) game.get("awayTeam");
                             awayTeamName = (String)team.get("Name");
 
                             log.info("isInProgress = " + isInProgress + " ||| isCompleted = " + isCompleted + " ||| homeScore = " + homeScore + " ||| awayScore = " + awayScore + " ||| homeTeamName = " + homeTeamName + " ||| awayTeamName = " + awayTeamName);
+
+
 
 
                             //check if the game is in progress and, if it is, stipulate that the minutes remaining in the game will be set to 1.

@@ -639,53 +639,57 @@ public class PlayerAPI {
                                 minutes_remaining = 0;
                             }
 
-                            //check if the game has ended and, if it has, stipulate that the isFinished will be 1.
-                            if (isCompleted.equals("true")) {
-                                isFinished = 1;
-                            } else {
-                                isFinished = 0;
-                            }
 
-                            //Retrieve the current week, should only be updating the current week.
-                            strquery = "SELECT CurrentWeek FROM sysinfo;";
-                            rs = conn.createStatement().executeQuery(strquery);
-                            if (rs.next()) {
-                                weekNum = rs.getInt("CurrentWeek");
-                            } else {
-                                log.severe("Failed to retrieve a week number from current week.");
-                                throw new Exception("No week, something's wrong!");
-                            }
-
-                            //Retreive the home team's ID in my database.
-                            strquery = "SELECT team_id FROM teams WHERE name = '" + homeTeamName + "';";
-                            rs = conn.createStatement().executeQuery(strquery);
-                            if (rs.next())
+                            if(homeScore.isEmpty())
                             {
-                                homeTeamNum = rs.getInt("team_id");
-                            }
-                            else
-                            {
-                                log.severe("Unable to find the the home team!!!");
-                                throw new Exception("No Home Team!!!");
-                            }
+                                //check if the game has ended and, if it has, stipulate that the isFinished will be 1.
+                                if (isCompleted.equals("true")) {
+                                    isFinished = 1;
+                                } else {
+                                    isFinished = 0;
+                                }
 
-                            strquery = "SELECT team_id FROM teams WHERE name = '" + awayTeamName + "';";
-                            rs = conn.createStatement().executeQuery(strquery);
-                            if (rs.next())
-                            {
-                                awayTeamNum = rs.getInt("team_id");
-                            }
-                            else
-                            {
-                                log.severe("Unable to find the the home team!!!");
-                                throw new Exception("No Away Team!!!");
-                            }
+                                //Retrieve the current week, should only be updating the current week.
+                                strquery = "SELECT CurrentWeek FROM sysinfo;";
+                                rs = conn.createStatement().executeQuery(strquery);
+                                if (rs.next()) {
+                                    weekNum = rs.getInt("CurrentWeek");
+                                } else {
+                                    log.severe("Failed to retrieve a week number from current week.");
+                                    throw new Exception("No week, something's wrong!");
+                                }
+
+                                //Retreive the home team's ID in my database.
+                                strquery = "SELECT team_id FROM teams WHERE name = '" + homeTeamName + "';";
+                                rs = conn.createStatement().executeQuery(strquery);
+                                if (rs.next())
+                                {
+                                    homeTeamNum = rs.getInt("team_id");
+                                }
+                                else
+                                {
+                                    log.severe("Unable to find the the home team!!!");
+                                    throw new Exception("No Home Team!!!");
+                                }
+
+                                strquery = "SELECT team_id FROM teams WHERE name = '" + awayTeamName + "';";
+                                rs = conn.createStatement().executeQuery(strquery);
+                                if (rs.next())
+                                {
+                                    awayTeamNum = rs.getInt("team_id");
+                                }
+                                else
+                                {
+                                    log.severe("Unable to find the the home team!!!");
+                                    throw new Exception("No Away Team!!!");
+                                }
 
 
-                            //Query for updating the score in the system.
-                            strquery = "UPDATE games SET home_score = " + homeScore + ", away_score = " + awayScore + ", isFinished = " + isFinished + ", mins_remaining = " + minutes_remaining + " WHERE (week_id = " + weekNum + " AND home_team = " + homeTeamNum + " AND away_team = " + awayTeamNum + ");";
-                            log.info("Updating a score: " + strquery);
-                            conn.createStatement().executeUpdate(strquery);
+                                //Query for updating the score in the system.
+                                strquery = "UPDATE games SET home_score = " + homeScore + ", away_score = " + awayScore + ", isFinished = " + isFinished + ", mins_remaining = " + minutes_remaining + " WHERE (week_id = " + weekNum + " AND home_team = " + homeTeamNum + " AND away_team = " + awayTeamNum + ");";
+                                log.info("Updating a score: " + strquery);
+                                conn.createStatement().executeUpdate(strquery);
+                            }
                         }
                     }
                     catch(Exception e)

@@ -50,19 +50,36 @@ public class Game
         double bet_amount = 0;
         double house_amount = 1;
         double line = 0.0;
+        int show_betters_before_freeze = -1;
+        int show_net_before_freeze = -1;
+        int show_betters_after_freeze = -1;
         final Logger log = Logger.getLogger(Game.class.getName());
 
         log.info("Constructing Game Entity.");
         log.info("league season passed: " + league_season_id);
         log.info("Game id passed: " + game_id);
+        log.info("User id passed: " + user_id);
 
         try
         {
-
-            //TODO: This is an inefficient query as it unconditionally joins league seasons just so that I can get the seaason and freeze time values and pass it back.
-            strquery = "SELECT g.isFinished AS isFinished, ls.freeze_minutes as freeze_minutes, g.home_score as home_score, g.away_score as away_score, g.mins_remaining as mins_remaining, g.secs_remaining as secs_remaining, g.game_id AS game_id, ht.name AS home_name, ht.city AS home_city, at.name AS away_name, at.city AS away_city, w.name_short AS week_short, g.home_line AS home_line, g.start AS start FROM games g INNER JOIN teams at on at.team_id = g.away_team INNER JOIN teams ht on ht.team_id = g.home_team INNER JOIN weeks w on w.id = g.week_id INNER JOIN league_seasons ls ON ls.season = w.season WHERE g.game_id = " + game_id + " AND ls.league_season_id = " + league_season_id + ";";
-
+            //check if we are exposing bets.
+            strquery = "SELECT freeze_minutes, show_net_before_freeze, show_betters_before_freeze, show_betters_after_freeze FROM league_seasons WHERE league_season_id = " + league_season_id + ";";
             ResultSet rs = conn.createStatement().executeQuery(strquery);
+            if (rs.next())
+            {
+                timetoremove = rs.getInt("freeze_minutes");
+                show_net_before_freeze = rs.getInt("show_net_before_freeze");
+                show_betters_before_freeze = rs.getInt("show_betters_before_freeze");
+                show_betters_after_freeze = rs.getInt("show_betters_after_freeze");
+            }
+            else //No data on the league season.
+            {
+                log.severe("No Data on the League Season!!!");
+                log.severe("Query Executed: " + strquery);
+            }
+
+            strquery = "SELECT g.isFinished AS isFinished, g.home_score as home_score, g.away_score as away_score, g.mins_remaining as mins_remaining, g.secs_remaining as secs_remaining, g.game_id AS game_id, ht.name AS home_name, ht.city AS home_city, at.name AS away_name, at.city AS away_city, w.name_short AS week_short, g.home_line AS home_line, g.start AS start FROM games g INNER JOIN teams at on at.team_id = g.away_team INNER JOIN teams ht on ht.team_id = g.home_team INNER JOIN weeks w on w.id = g.week_id WHERE g.game_id = " + game_id + ";";
+            rs = conn.createStatement().executeQuery(strquery);
             if (rs.next()) //Anything in the result set?
             {
                 this.id = game_id;
@@ -76,10 +93,9 @@ public class Game
                 this.away_score = rs.getInt("away_score");
                 this.start = rs.getTimestamp("start");
                 this.isFinished = rs.getInt("isFinished");
-                timetoremove = rs.getInt("freeze_minutes");
 
                 freeze = rs.getTimestamp("start");
-                freeze = new Date(freeze.getTime() - 3600 * 1000);
+                freeze = new Date(freeze.getTime() - (timetoremove * 60) * 1000);
                 log.info("Freeze Date: " + freeze.toString());
 
                 this.isLocked = 0;
@@ -114,7 +130,16 @@ public class Game
             if (rs.next()) //Anything in the result set?
             {
                 bet_amount = rs.getDouble("bet_amount");
-                house_amount = bet_amount / (rs.getInt("players") - 1);
+
+                //I am only setting the house amount if the net bet is going to be shown.  Otherwise I will leave it at zero so that the user bet amount is only reflective of the individuals bets.
+                if (this.isLocked == 0 && show_net_before_freeze == 0)
+                {
+                    house_amount = 0;
+                }
+                else
+                {
+                    house_amount = bet_amount / (rs.getInt("players") - 1);
+                }
 
             }
             else //Nothing in the result set.
@@ -123,8 +148,6 @@ public class Game
                 log.severe("Query Executed: " + strquery);
             }
 
-
-            //Get the bets for each side.
             this.home_bets = new ArrayList<Player>();
             this.away_bets = new ArrayList<Player>();
             this.user_net_home_bet = 0;
@@ -135,37 +158,45 @@ public class Game
                 do
                     if (rs.getInt("home") == 1)
                     {
-                        this.home_bets.add(new Player(rs.getInt("user_id"), league_season_id, conn));
-
                         if (rs.getInt("user_id") == user_id)
                         {
+                            this.home_bets.add(new Player(rs.getInt("user_id"), league_season_id, conn));
                             this.user_net_home_bet += bet_amount;
                         }
                         else
                         {
                             this.user_net_home_bet -= house_amount;
+                            if((this.isLocked == 0 && show_betters_before_freeze == 1) || (this.isLocked == 1 && show_betters_after_freeze == 1))
+                            {
+                                this.home_bets.add(new Player(rs.getInt("user_id"), league_season_id, conn));
+                            }
                         }
                     }
                     else
                     {
-                        this.away_bets.add(new Player(rs.getInt("user_id"), league_season_id, conn));
-
                         if (rs.getInt("user_id") == user_id)
                         {
                             this.user_net_home_bet -= bet_amount;
+                            this.away_bets.add(new Player(rs.getInt("user_id"), league_season_id, conn));
                         }
                         else
                         {
                             this.user_net_home_bet += house_amount;
+                            if((this.isLocked == 0 && show_betters_before_freeze == 1) || (this.isLocked == 1 && show_betters_after_freeze == 1))
+                            {
+                                this.away_bets.add(new Player(rs.getInt("user_id"), league_season_id, conn));
+                            }
                         }
                     }
                 while (rs.next());
+
             }
             else //Nothing in the result set.
             {
                 log.info("Nothing bet on this game.");
                 log.info("Query Executed: " + strquery);
             }
+
 
         }
         catch (SQLException e)

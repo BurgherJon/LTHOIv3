@@ -63,8 +63,9 @@
             <th>
                 <div id="maindisplay" align="left">Loading...</div>
             </th>
-            <th>
+            <th valign="top">
                 <div id="sidebar"></div>
+                <div id="bets" align="left"></div>
             </th>
         </tr>
 
@@ -211,6 +212,7 @@
         week = strinput;
 
         maindisplay.innerHTML = "Loading...";
+        bets.innerHTML = "";
 
         var requestData = {};
         requestData.firebase_uid = fid;
@@ -231,6 +233,14 @@
              var awaynet = "";
              var background = "";
              var counter = 0;
+             var innercounter = 0;
+             var homebetters = [];
+             var awaybetters = [];
+             var homebetterdisplay = "";
+             var awaybetterdisplay = "";
+             var name = "";
+             var found = 0;
+
 
              //Display the week.
              var display = "<h1 align='center'>" + response.long_Name + "</h1>";
@@ -345,9 +355,11 @@
                     }
                   }
 
-                  //Figure out how many bets the user has on the hometeam.
+                  //Figure out how many bets the user has on the hometeam and away team.  Also get an array of all of the betters on each side.
                   homebets = 0;
+                  homebetters = [];
                   awaybets = 0;
+                  awaybetters = [];
                   if (!(games[z].home_bets === undefined))
                   {
                     for(counter=0;counter<games[z].home_bets.length;counter++)
@@ -355,6 +367,23 @@
                         if (games[z].home_bets[counter].email == email)
                         {
                             homebets++;
+                        }
+                        else
+                        {
+                            found = 0;
+                            name = games[z].home_bets[counter].fname + " " + games[z].home_bets[counter].linitial + ".";
+                            for (innercounter=0;innercounter<homebetters.length;innercounter++)
+                            {
+                                if(name == homebetters[innercounter])
+                                {
+                                    found = 1;
+                                }
+                            }
+
+                            if (found == 0)
+                            {
+                                homebetters.push(name);
+                            }
                         }
                     }
                   }
@@ -366,7 +395,52 @@
                         {
                             awaybets++;
                         }
+                        else
+                        {
+                            found = 0;
+                            name = games[z].away_bets[counter].fname + " " + games[z].away_bets[counter].linitial + ".";
+                            for (innercounter=0;innercounter<awaybetters.length;innercounter++)
+                            {
+                                if(name == awaybetters[innercounter])
+                                {
+                                    found = 1;
+                                }
+                            }
+
+                            if (found == 0)
+                            {
+                                awaybetters.push(name);
+                            }
+                        }
                     }
+                  }
+
+
+                  //Create the betters HTML
+                  if (homebetters.length > 0)
+                  {
+                    homebetterdisplay = "Bets on the " + games[z].home_team + " from:<br>"
+                    for (counter=0;counter<homebetters.length;counter++)
+                    {
+                        homebetterdisplay += " - " + homebetters[counter] + "<br>";
+                    }
+                  }
+                  else
+                  {
+                    homebetterdisplay = "No one bet on the " + games[z].home_team;
+                  }
+
+                  if (awaybetters.length > 0)
+                  {
+                    awaybetterdisplay = "Bets on the " + games[z].away_team + " from:<br>"
+                    for (counter=0;counter<awaybetters.length;counter++)
+                    {
+                        awaybetterdisplay += " - " + awaybetters[counter] + "<br>";
+                    }
+                  }
+                  else
+                  {
+                    awaybetterdisplay = "No one bet on the " + games[z].away_team;
                   }
 
 
@@ -392,7 +466,7 @@
                   display += "</th>";
 
                   //Display Home Game Data
-                  display += "<th " + homeborder + ">" + games[z].home_team + homenet + "</th>";
+                  display += "<th " + homeborder + " onclick='bets.innerHTML = \"" + homebetterdisplay + "\"'>" + games[z].home_team + homenet + "</th>";
                   display += "<th>" + games[z].home_score + "</th>";
 
                   //If the line hasn't been defined then there will not be any bets or line, so we can skip displying the middle row.  The game will have already been marked frozen as that is default behavior.
@@ -407,7 +481,7 @@
 
                   //Display the Away Game Data
                   display += "<th>" + games[z].away_score + "</th>";
-                  display += "<th " + awayborder + ">" + games[z].away_team + awaynet + "</th>";
+                  display += "<th " + awayborder + " onclick='bets.innerHTML = \"" + awaybetterdisplay + "\"'>" + games[z].away_team + awaynet + "</th>";
 
                   //Bet button on away team.
                   display += "<th>";

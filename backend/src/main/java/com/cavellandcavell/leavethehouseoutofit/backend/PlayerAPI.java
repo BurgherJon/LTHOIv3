@@ -449,6 +449,10 @@ public class PlayerAPI {
 
             strquery = "Select u.email from users u INNER JOIN league_season_user_map lsum ON lsum.user_id = u.user_id WHERE lsum.league_season_id = " + league_season_id + ";";
             ResultSet rs = conn.createStatement().executeQuery(strquery);
+            double highest;
+            int highestindex;
+            Player on;
+
             if (rs.next()) //Anything in the result set?
             {
                 do
@@ -456,6 +460,25 @@ public class PlayerAPI {
                     response.add(new Player(rs.getString("email"), league_season_id, conn));
                 }
                 while (rs.next());
+
+                for (int i=0;i<response.size();i++)
+                {
+                    highest = response.get(i).getWinnings();
+                    highestindex = i;
+                    on = response.get(i);
+
+                    for (int j=(i+1);j<response.size();j++)
+                    {
+                        if (response.get(j).getWinnings()>highest)
+                        {
+                            highest = response.get(j).getWinnings();
+                            highestindex = j;
+                        }
+                    }
+
+                    response.set(i, response.get(highestindex));
+                    response.set(highestindex, on);
+                }
             }
             else //Nothing in the result set.
             {
@@ -603,7 +626,7 @@ public class PlayerAPI {
                         JSONArray gamescores = (JSONArray) scoreboard.get("gameScore");
                         JSONObject gamescore;
                         JSONObject team;
-                        JSONObject game;
+                            JSONObject game;
                         String isInProgress;
                         String isCompleted;
                         String homeScore;

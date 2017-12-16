@@ -57,7 +57,7 @@ public class Bet
             if (rs.next())
             {
                 freeze = rs.getTimestamp("start");
-                freeze = new Date(freeze.getTime() - rs.getInt("freeze_time") * 1000);
+                freeze = new Date(freeze.getTime() - rs.getInt("freeze_minutes") * 1000);
                 log.info("Freeze Date: " + freeze.toString());
 
                 if (freeze.before(new Date()))

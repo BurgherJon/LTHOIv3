@@ -1,17 +1,11 @@
 package com.cavellandcavell.leavethehouseoutofit.backend;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
-
-import com.google.appengine.api.utils.SystemProperty;
 
 /** This is used to manage the active user. **/
 public class Bet
@@ -62,14 +56,8 @@ public class Bet
             ResultSet rs = conn.createStatement().executeQuery(strquery);
             if (rs.next())
             {
-                /*Calendar date = Calendar.getInstance();
-                date.setTimeInMillis(rs.getDate("start").getTime());
-                date.add(Calendar.MINUTE, (-1 * rs.getInt("freeze_minutes")));
-                freeze = new Date();
-                freeze.setTime(date.getTimeInMillis());*/
-
                 freeze = rs.getTimestamp("start");
-                freeze = new Date(freeze.getTime() - 3600 * 1000);
+                freeze = new Date(freeze.getTime() - rs.getInt("freeze_time") * 1000);
                 log.info("Freeze Date: " + freeze.toString());
 
                 if (freeze.before(new Date()))
@@ -137,6 +125,45 @@ public class Bet
 
                 return;
             }
+
+
+
+
+            //Check if the player already has too many bets for the week.
+            strquery = "SELECT ls.bets_per_week FROM lthoidb.league_seasons ls WHERE ls.league_season_id = " + lsid + ";";
+            log.info("Getting nummer of bets allowed in week: " + strquery);
+            rs = conn.createStatement().executeQuery(strquery);
+            int betsallowed = 0;
+            if (rs.next())
+            {
+                betsallowed = rs.getInt("bets_per_week");
+            }
+            else //Nothing in the result set.
+            {
+                log.info("Couldn't find the league_season");
+                return;
+            }
+            if (betsallowed != 0) {
+                strquery = "SELECT COUNT(*) AS bets FROM lthoidb.bets b WHERE b.game_id IN (SELECT g.game_id FROM lthoidb.games g WHERE g.week_id IN (SELECT g.week_id FROM lthoidb.games g WHERE g.game_id = " + game_id + ")) AND b.league_season_id = " + lsid + " AND b.user_id = " + user_id + ";";
+                log.info("Getting number of bets made this week: " + strquery);
+                rs = conn.createStatement().executeQuery(strquery);
+                if (rs.next())
+                {
+                    betsmade = rs.getInt("bets");
+                    if (betsmade >= betsallowed)
+                    {
+                        log.info("Too many bets made this week to place another one.");
+                        return;
+                    }
+                }
+                else //Nothing in the result set.
+                {
+                    log.info("Couldn't find the league_season or user or week");
+                    return;
+                }
+            }
+
+
 
 
             //Place the bet in the database.

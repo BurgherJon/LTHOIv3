@@ -607,7 +607,7 @@ public class PlayerAPI {
                     //Setup the URL Fetch
                     try
                     {
-                        URL url = new URL("https://api.mysportsfeeds.com/v1.1/pull/nfl/2017-regular/scoreboard.json?fordate=" + year + month + day /* + "&force=false" */);
+                        URL url = new URL("https://api.mysportsfeeds.com/v1.1/pull/nfl/current/scoreboard.json?fordate=" + year + month + day /* + "&force=false" */);
                         String encoding = new String(Base64.encodeBase64("BurgherJon:VegasVaca".getBytes()));
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                         connection.setRequestMethod("GET");
